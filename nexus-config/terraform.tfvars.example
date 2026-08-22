@@ -1,0 +1,14 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# Do NOT commit terraform.tfvars to source control — it contains credentials.
+
+nxos_host     = "devnetsandboxiosxec9k.cisco.com"       # IP or hostname of your Nexus switch
+nxos_username = "amit.kurmapu"
+nxos_password = "-B7V4pQ_r0uP"  # store in a secrets manager for production
+
+insecure_tls  = true                # set false when using a valid TLS cert
+
+interfaces_to_query = [
+  "eth1/1",
+  "eth1/2",
+  "eth1/3",
+]
