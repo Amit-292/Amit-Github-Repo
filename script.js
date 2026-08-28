@@ -77,6 +77,35 @@ contactForm.addEventListener('submit', (e) => {
   }, 1200);
 });
 
+// ---------- Course Modal ----------
+const modalOverlay = document.getElementById('modalOverlay');
+const modalBody    = document.getElementById('modalBody');
+const modalClose   = document.getElementById('modalClose');
+
+document.querySelectorAll('[data-modal]').forEach(card => {
+  card.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-view-curriculum') || e.target.closest('.btn-view-curriculum')) {
+      const tplId = 'tpl-' + card.dataset.modal;
+      const tpl   = document.getElementById(tplId);
+      if (tpl) {
+        modalBody.innerHTML = '';
+        modalBody.appendChild(tpl.content.cloneNode(true));
+        modalOverlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  });
+});
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+function closeModal() {
+  modalOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 // ---------- Smooth scroll for anchor links ----------
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {

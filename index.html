@@ -109,62 +109,12 @@
           <p>Python, Machine Learning, Deep Learning, NLP, and real-world AI projects.</p>
           <span class="course-tag">6 Months</span>
         </div>
-        <div class="course-card course-card--expanded">
+        <div class="course-card" data-modal="network-security">
           <div class="course-icon">🔒</div>
           <h3>Network Security</h3>
-          <p>A comprehensive program covering real-world network defence, access control, and secure infrastructure design.</p>
-          <div class="course-topics">
-            <div class="topic-group">
-              <h4>🛡️ Core Security Concepts</h4>
-              <ul>
-                <li>Threats, vulnerabilities, exploits &amp; mitigation</li>
-                <li>User awareness, physical access &amp; remote access policies</li>
-              </ul>
-            </div>
-            <div class="topic-group">
-              <h4>🔑 Device Access Control</h4>
-              <ul>
-                <li>Local passwords, usernames &amp; password policies</li>
-                <li>MFA, certificates &amp; biometrics</li>
-                <li>SSH, Telnet, HTTP/HTTPS &amp; console line security</li>
-              </ul>
-            </div>
-            <div class="topic-group">
-              <h4>👤 AAA (Authentication, Authorization &amp; Accounting)</h4>
-              <ul>
-                <li>AAA principles &amp; comparison</li>
-                <li>TACACS+ and RADIUS configuration</li>
-              </ul>
-            </div>
-            <div class="topic-group">
-              <h4>📋 Access Control Lists (ACLs)</h4>
-              <ul>
-                <li>IPv4 ACL configuration &amp; verification</li>
-                <li>Standard, extended, numbered &amp; named ACLs</li>
-              </ul>
-            </div>
-            <div class="topic-group">
-              <h4>🔌 Layer 2 Security Features</h4>
-              <ul>
-                <li>Port security &amp; MAC address flood mitigation</li>
-                <li>DHCP Snooping &amp; Dynamic ARP Inspection (DAI)</li>
-              </ul>
-            </div>
-            <div class="topic-group">
-              <h4>📡 Wireless Security</h4>
-              <ul>
-                <li>WPA, WPA2 &amp; WPA3 standards</li>
-                <li>WLAN configuration with WPA2 PSK (GUI)</li>
-              </ul>
-            </div>
-            <div class="topic-group">
-              <h4>🌐 VPNs (Virtual Private Networks)</h4>
-              <ul>
-                <li>Secure remote access &amp; site-to-site IPsec VPNs</li>
-              </ul>
-            </div>
-          </div>
+          <p>Comprehensive network defence, access control, AAA, VPNs, Layer 2 security and more.</p>
           <span class="course-tag">3 Months</span>
+          <button class="btn-view-curriculum">View Curriculum →</button>
         </div>
         <div class="course-card">
           <div class="course-icon">📱</div>
@@ -318,6 +268,78 @@
       <p>© 2026 Eksperty. All rights reserved. | Built with ❤️ using GitHub Pages</p>
     </div>
   </footer>
+
+  <!-- ========== COURSE MODAL ========== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Network Security Course Data -->
+  <template id="tpl-network-security">
+    <div class="modal-course-header">
+      <span class="course-icon">🔒</span>
+      <div>
+        <h2>Network Security</h2>
+        <span class="course-tag">3 Months</span>
+      </div>
+    </div>
+    <div class="course-topics">
+      <div class="topic-group">
+        <h4>🛡️ Core Security Concepts</h4>
+        <ul>
+          <li>Threats, vulnerabilities, exploits &amp; mitigation techniques</li>
+          <li>User awareness training, physical access control &amp; remote access policies</li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>🔑 Device Access Control</h4>
+        <ul>
+          <li>Local passwords, usernames &amp; password complexity policies</li>
+          <li>MFA, certificates &amp; biometrics</li>
+          <li>SSH, Telnet, HTTP/HTTPS &amp; console line security</li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>👤 AAA – Authentication, Authorization &amp; Accounting</h4>
+        <ul>
+          <li>AAA principles &amp; comparison of each component</li>
+          <li>TACACS+ and RADIUS configuration on network devices</li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>📋 Access Control Lists (ACLs)</h4>
+        <ul>
+          <li>IPv4 ACL configuration &amp; verification</li>
+          <li>Standard, extended, numbered &amp; named ACLs to permit/deny flows</li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>🔌 Layer 2 Security Features</h4>
+        <ul>
+          <li>Port security — mitigate MAC address flooding</li>
+          <li>DHCP Snooping — prevent rogue DHCP server attacks</li>
+          <li>Dynamic ARP Inspection (DAI) — protect against ARP spoofing</li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>📡 Wireless Security</h4>
+        <ul>
+          <li>WPA, WPA2 &amp; WPA3 standards comparison</li>
+          <li>WLAN configuration with WPA2 PSK via GUI</li>
+        </ul>
+      </div>
+      <div class="topic-group">
+        <h4>🌐 VPNs – Virtual Private Networks</h4>
+        <ul>
+          <li>Secure remote access fundamentals</li>
+          <li>Site-to-site IPsec VPN architecture</li>
+        </ul>
+      </div>
+    </div>
+  </template>
 
   <script src="script.js"></script>
 </body>
