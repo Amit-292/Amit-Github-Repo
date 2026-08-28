@@ -138,14 +138,10 @@ img { max-width: 100%; }
   font-size: 1.6rem;
   font-weight: 800;
   letter-spacing: -1px;
+  color: var(--primary);
 }
 .brand-e {
   color: var(--primary);
-  background: var(--primary);
-  color: #fff;
-  border-radius: 6px;
-  padding: 0 6px;
-  margin-right: 2px;
 }
 
 .nav-links {
