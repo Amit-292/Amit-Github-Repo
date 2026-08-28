@@ -64,17 +64,27 @@ const formSuccess  = document.getElementById('formSuccess');
 
 contactForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  // Simulate form submission
+
+  const name    = contactForm.querySelector('[name="name"]').value.trim();
+  const email   = contactForm.querySelector('[name="email"]').value.trim();
+  const subject = contactForm.querySelector('[name="subject"]').value.trim();
+  const message = contactForm.querySelector('[name="message"]').value.trim();
+
   const btn = contactForm.querySelector('button[type="submit"]');
-  btn.textContent = 'Sending…';
+  btn.textContent = 'Opening WhatsApp…';
   btn.disabled = true;
+
+  const text = `Hi Eksperty! 👋\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
+  const whatsappURL = `https://wa.me/916302672256?text=${encodeURIComponent(text)}`;
+
   setTimeout(() => {
+    window.open(whatsappURL, '_blank');
     formSuccess.classList.add('show');
     contactForm.reset();
     btn.textContent = 'Send Message 🚀';
     btn.disabled = false;
-    setTimeout(() => formSuccess.classList.remove('show'), 4000);
-  }, 1200);
+    setTimeout(() => formSuccess.classList.remove('show'), 5000);
+  }, 800);
 });
 
 // ---------- Course Modal ----------
