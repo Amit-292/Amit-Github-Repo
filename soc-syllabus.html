@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOC Analyst Training Syllabus – Eksperty</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --raspberry:       #9B1B4B;
+      --raspberry-light: #C42060;
+      --raspberry-pale:  #F5E6EC;
+      --raspberry-dark:  #6D1234;
+      --white:           #FFFFFF;
+      --off-white:       #FAFAFA;
+      --gray-light:      #F0F0F0;
+      --text-dark:       #1A1A1A;
+      --text-mid:        #4A4A4A;
+    }
+
+    @page { size: A4 portrait; margin: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      gap: 30px;
+    }
+
+    /* ── Page Shell ── */
+    .page {
+      width: 794px;
+      background: var(--white);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+
+    /* ── Top Band ── */
+    .top-band {
+      background: var(--raspberry);
+      width: 100%;
+      height: 8px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--white);
+      padding: 16px 48px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--raspberry-pale);
+    }
+
+    .brand-text { display: flex; flex-direction: column; align-items: flex-start; }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+    }
+    .brand-name span { color: var(--raspberry); }
+
+    .brand-tagline {
+      font-size: 9px;
+      color: var(--text-mid);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .header-badge {
+      background: var(--raspberry-pale);
+      color: var(--raspberry);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1.5px solid var(--raspberry);
+    }
+
+    /* ── Hero Banner ── */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--raspberry-dark) 0%, var(--raspberry) 50%, var(--raspberry-light) 100%);
+      padding: 36px 48px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      border: 55px solid rgba(255,255,255,0.06);
+      top: -100px; right: -60px;
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      border: 35px solid rgba(255,255,255,0.06);
+      bottom: -60px; left: 40px;
+    }
+
+    .hero-inner { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .hero-eyebrow::before { content: '★'; color: #FFD700; font-size: 10px; }
+
+    .hero-title {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .hero-title span { color: #FFD700; }
+
+    .hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 400;
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .pill {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── Info Strip ── */
+    .info-strip {
+      background: var(--raspberry-dark);
+      display: flex;
+      align-items: stretch;
+    }
+
+    .info-item {
+      flex: 1;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-right: 1px solid rgba(255,255,255,0.12);
+    }
+    .info-item:last-child { border-right: none; }
+    .info-icon { font-size: 18px; }
+    .info-text strong { display: block; color: var(--white); font-size: 13px; font-weight: 700; }
+    .info-text span { font-size: 9px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── Body ── */
+    .body { padding: 28px 48px 24px; background: var(--off-white); }
+
+    /* ── Section Label ── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .section-label h2 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--raspberry);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      white-space: nowrap;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--raspberry-pale), transparent);
+    }
+
+    /* ── Week Block ── */
+    .week-block {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 14px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .week-header {
+      background: linear-gradient(135deg, var(--raspberry-dark), var(--raspberry));
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .week-badge {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .week-type {
+      color: rgba(255,255,255,0.75);
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .week-content { padding: 16px 20px; }
+
+    /* ── Module ── */
+    .module { margin-bottom: 14px; }
+    .module:last-child { margin-bottom: 0; }
+
+    .module-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .module-num {
+      background: var(--raspberry);
+      color: var(--white);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .module-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .topic-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px 16px;
+      padding-left: 4px;
+    }
+
+    .topic-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--text-mid);
+      line-height: 1.4;
+    }
+
+    .topic-item::before {
+      content: '›';
+      color: var(--raspberry);
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: -1px;
+      flex-shrink: 0;
+    }
+
+    /* ── CTA Strip ── */
+    .cta-strip {
+      background: linear-gradient(135deg, var(--raspberry-dark), var(--raspberry-light));
+      border-radius: 14px;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .cta-strip h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .cta-strip p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .cta-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+    .cta-btn {
+      background: var(--white);
+      color: var(--raspberry);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 10px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .cta-phone {
+      color: rgba(255,255,255,0.9);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: var(--text-dark);
+      padding: 10px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .site-footer p {
+      color: rgba(255,255,255,0.5);
+      font-size: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-brand {
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .footer-brand span { color: var(--raspberry-light); }
+
+    /* ── Print ── */
+    @media print {
+      body { background: none; padding: 0; gap: 0; }
+      .page { box-shadow: none; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════ PAGE 1 ══════════════ -->
+  <div class="page">
+    <div class="top-band"></div>
+
+    <!-- Header -->
+    <div class="site-header">
+      <div class="brand-text">
+        <div class="brand-name">Eksp<span>erty</span></div>
+        <div class="brand-tagline">Transforming Careers Through Expert Training</div>
+      </div>
+      <div class="header-badge">Training Syllabus</div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-banner">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-eyebrow">New Batch · 2026</div>
+          <div class="hero-title">Cyber Security +<br><span>SOC</span> Operations Center</div>
+          <div class="hero-sub">Gain Expert-Level Knowledge with Hands-on Labs &amp; Industry Expert Trainers</div>
+          <div class="hero-pills">
+            <span class="pill">🧪 Hands-on Labs</span>
+            <span class="pill">📅 7–10 Weeks</span>
+            <span class="pill">🎓 Weekend Batches</span>
+            <span class="pill">🛡️ SOC Focused</span>
+            <span class="pill">📞 1-on-1 Sessions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Strip -->
+    <div class="info-strip">
+      <div class="info-item">
+        <div class="info-icon">⏱️</div>
+        <div class="info-text">
+          <strong>7–10 Weeks</strong>
+          <span>Program Duration</span>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">📅</div>
+        <div class="info-text">
+          <strong>Weekends</strong>
+          <span>Batch Schedule</span>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">💬</div>
+        <div class="info-text">
+          <strong>2 Months</strong>
+          <span>On-the-Job Support</span>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">🖥️</div>
+        <div class="info-text">
+          <strong>Live + Recorded</strong>
+          <span>Session Format</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body">
+
+      <div class="section-label"><h2>Training Syllabus</h2></div>
+
+      <!-- Week 1-2 -->
+      <div class="week-block">
+        <div class="week-header">
+          <span class="week-badge">Week 1 – 2</span>
+          <span class="week-type">Theory</span>
+        </div>
+        <div class="week-content">
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 01</span>
+              <span class="module-name">Networking Fundamentals</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Discussion on typical Enterprise Network</div>
+              <div class="topic-item">OSI Layers</div>
+            </div>
+          </div>
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 02</span>
+              <span class="module-name">Security Operations Centre Concepts</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Pillars of Cybersecurity</div>
+            </div>
+          </div>
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 03</span>
+              <span class="module-name">Anatomy of Cyber Attacks</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Types of Malwares</div>
+              <div class="topic-item">Types of Attacks</div>
+              <div class="topic-item">Threat Mitigation</div>
+              <div class="topic-item">Cyber Kill Chain</div>
+              <div class="topic-item">IOC &amp; IOA</div>
+              <div class="topic-item">Pyramid of Pain</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Week 2 -->
+      <div class="week-block">
+        <div class="week-header">
+          <span class="week-badge">Week 2</span>
+          <span class="week-type">Theory</span>
+        </div>
+        <div class="week-content">
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 04</span>
+              <span class="module-name">MITRE ATT&amp;CK Framework &amp; SOC Initial Concepts</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Discussion on MITRE Framework</div>
+              <div class="topic-item">Discussion on TTP</div>
+              <div class="topic-item">ATT&amp;CK Workbench</div>
+              <div class="topic-item">SOC Architecture</div>
+              <div class="topic-item">Core Concepts for SOC Operations</div>
+              <div class="topic-item">SOC Metrics</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Week 3 -->
+      <div class="week-block">
+        <div class="week-header">
+          <span class="week-badge">Week 3</span>
+          <span class="week-type">Practical &amp; Theory</span>
+        </div>
+        <div class="week-content">
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 05</span>
+              <span class="module-name">Vulnerability Assessment</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Vulnerability Management</div>
+              <div class="topic-item">Type of Vulnerability Assessment</div>
+              <div class="topic-item">Vulnerability Management Lifecycle</div>
+            </div>
+          </div>
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 06</span>
+              <span class="module-name">Vulnerability Assessment Practical</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Reporting &amp; Report Analysis</div>
+              <div class="topic-item">Handling Vulnerability</div>
+              <div class="topic-item">Risk Based Vulnerability</div>
+              <div class="topic-item">KPI for Vulnerability Assessment</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Week 4 -->
+      <div class="week-block">
+        <div class="week-header">
+          <span class="week-badge">Week 4</span>
+          <span class="week-type">Practical &amp; Theory</span>
+        </div>
+        <div class="week-content">
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 07</span>
+              <span class="module-name">E-Mail Analysis</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Email Header Analysis</div>
+              <div class="topic-item">Email Security Tool-Based Analysis</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Week 5 -->
+      <div class="week-block">
+        <div class="week-header">
+          <span class="week-badge">Week 5</span>
+          <span class="week-type">Practical &amp; Theory</span>
+        </div>
+        <div class="week-content">
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 09</span>
+              <span class="module-name">Incident Response</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Initial Triage</div>
+              <div class="topic-item">Log Analysis (Manual)</div>
+              <div class="topic-item">Analysis of Different Alerts</div>
+              <div class="topic-item">IOC Enrichment</div>
+              <div class="topic-item">Incident Response Workflow</div>
+              <div class="topic-item">Reporting &amp; Documentation</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Week 7-8 -->
+      <div class="week-block">
+        <div class="week-header">
+          <span class="week-badge">Week 7 – 8</span>
+          <span class="week-type">Practical &amp; Theory</span>
+        </div>
+        <div class="week-content">
+
+          <div class="module">
+            <div class="module-title">
+              <span class="module-num">Module 10</span>
+              <span class="module-name">EDR Training – Microsoft Defender for Endpoint (Intermediate)</span>
+            </div>
+            <div class="topic-list">
+              <div class="topic-item">Defender Features</div>
+              <div class="topic-item">Defender Installation Steps</div>
+              <div class="topic-item">Alert / Incident Investigation</div>
+              <div class="topic-item">Analyse Incident Graph</div>
+              <div class="topic-item">Intune Policy / Rules Configuration</div>
+              <div class="topic-item">Vulnerability Management via MS Defender</div>
+              <div class="topic-item">Quarantine Files</div>
+              <div class="topic-item">Contain Endpoints</div>
+              <div class="topic-item">Live Response Actions</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-strip">
+        <div>
+          <h3>Secure Your Seat Today!</h3>
+          <p>Limited seats &nbsp;·&nbsp; Weekend batches &nbsp;·&nbsp; 2 months post-training support</p>
+        </div>
+        <div class="cta-right">
+          <a class="cta-btn" href="tel:6302672256">Enroll Now →</a>
+          <div class="cta-phone">📞 +91 63026 72256</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+      <p>© 2026 Eksperty Private Limited. All rights reserved. &nbsp;|&nbsp; hr@eksperty.com &nbsp;|&nbsp; Visakhapatnam</p>
+      <div class="footer-brand">Eksp<span>erty</span></div>
+    </div>
+  </div>
+
+</body>
+</html>
