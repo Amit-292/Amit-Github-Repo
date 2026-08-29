@@ -1,0 +1,24 @@
+{
+  "name": "desktop-tutorial",
+  "version": "1.0.0",
+  "description": "A modern, responsive training and placement website built with pure HTML/CSS/JavaScript and deployed globally via **GitHub Pages** using **Terraform**.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amit-292/Amit-Github-Repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Amit-292/Amit-Github-Repo/issues"
+  },
+  "homepage": "https://github.com/Amit-292/Amit-Github-Repo#readme",
+  "dependencies": {
+    "puppeteer": "^25.9.0"
+  }
+}
