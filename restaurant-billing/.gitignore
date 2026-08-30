@@ -1,0 +1,9 @@
+node_modules/
+client/node_modules/
+client/dist/
+.env
+server/restaurant.db
+server/restaurant.db-shm
+server/restaurant.db-wal
+*.log
+.DS_Store
