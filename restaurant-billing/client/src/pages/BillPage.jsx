@@ -19,6 +19,7 @@ export default function BillPage() {
   const [subtotal, setSubtotal] = useState(0);
   const [config, setConfig] = useState({ upiId: '', restaurantName: 'My Restaurant' });
   const [loading, setLoading] = useState(true);
+  const [removing, setRemoving] = useState(null); // itemId or orderId being removed
 
   const sessionId = localStorage.getItem(`session_${tableId}`);
 
@@ -41,23 +42,66 @@ export default function BillPage() {
 
   useEffect(() => { loadBill(); }, [loadBill]);
 
-  // Real-time status updates via Socket.io
+  // Real-time status updates
   useEffect(() => {
     const socket = io('/', { transports: ['websocket', 'polling'] });
     socket.on('order_updated', (data) => {
-      setOrders((prev) =>
-        prev.map((o) => (o.id === data.orderId ? { ...o, status: data.status } : o))
-      );
+      if (data.status === 'cancelled') {
+        setOrders((prev) => prev.filter((o) => o.id !== data.orderId));
+      } else {
+        setOrders((prev) =>
+          prev.map((o) => (o.id === data.orderId ? { ...o, status: data.status } : o))
+        );
+      }
     });
     return () => socket.disconnect();
   }, []);
 
+  // Recalculate subtotal whenever orders change
+  useEffect(() => {
+    const total = orders.reduce((sum, order) =>
+      sum + order.items.reduce((s, item) => s + item.price_at_order * item.quantity, 0), 0
+    );
+    setSubtotal(Math.round(total * 100) / 100);
+  }, [orders]);
+
+  const removeItem = async (orderId, itemId, itemName) => {
+    if (!window.confirm(`Remove "${itemName}" from your order?`)) return;
+    setRemoving(itemId);
+    try {
+      const res = await api.delete(`/orders/${orderId}/items/${itemId}`);
+      if (res.data.orderCancelled) {
+        setOrders((prev) => prev.filter((o) => o.id !== orderId));
+      } else {
+        setOrders((prev) => prev.map((o) =>
+          o.id === orderId ? { ...o, items: o.items.filter((i) => i.id !== itemId) } : o
+        ));
+      }
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to remove item');
+    } finally {
+      setRemoving(null);
+    }
+  };
+
+  const cancelOrder = async (orderId) => {
+    if (!window.confirm('Cancel this entire order?')) return;
+    setRemoving(`order_${orderId}`);
+    try {
+      await api.delete(`/orders/${orderId}`);
+      setOrders((prev) => prev.filter((o) => o.id !== orderId));
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to cancel order');
+    } finally {
+      setRemoving(null);
+    }
+  };
+
   const gst = Math.round(subtotal * GST_RATE * 100) / 100;
   const grandTotal = Math.round((subtotal + gst) * 100) / 100;
 
-  const allReady   = orders.length > 0 && orders.every((o) => o.status === 'ready' || o.status === 'served');
-  const anyReady   = orders.some((o) => o.status === 'ready');
-  const allServed  = orders.length > 0 && orders.every((o) => o.status === 'served');
+  const anyReady  = orders.some((o) => o.status === 'ready');
+  const allServed = orders.length > 0 && orders.every((o) => o.status === 'served');
 
   if (loading) return <div className="spinner" />;
 
@@ -90,7 +134,6 @@ export default function BillPage() {
           </div>
         ) : (
           <>
-            {/* Ready banner */}
             {anyReady && !allServed && (
               <div className="ready-banner" style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: '2rem' }}>🎉</div>
@@ -101,28 +144,55 @@ export default function BillPage() {
               </div>
             )}
 
-            {/* Order cards */}
             {orders.map((order, idx) => {
               const meta = STATUS_META[order.status] || STATUS_META.pending;
+              const isPending = order.status === 'pending';
               return (
                 <div key={order.id} className="card mb-16">
                   <div className="flex-between mb-16">
                     <strong>Order #{idx + 1}</strong>
-                    <span className="order-status-badge" style={{ background: meta.color, fontSize: '0.75rem', padding: '4px 10px', borderRadius: 20, color: 'white', fontWeight: 600 }}>
-                      {meta.icon} {meta.label}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span className="order-status-badge" style={{ background: meta.color, fontSize: '0.75rem', padding: '4px 10px', borderRadius: 20, color: 'white', fontWeight: 600 }}>
+                        {meta.icon} {meta.label}
+                      </span>
+                      {isPending && (
+                        <button
+                          onClick={() => cancelOrder(order.id)}
+                          disabled={removing === `order_${order.id}`}
+                          style={{ background: 'none', border: '1px solid #e74c3c', color: '#e74c3c', borderRadius: 6, padding: '3px 8px', fontSize: '0.75rem', cursor: 'pointer' }}
+                        >
+                          {removing === `order_${order.id}` ? '...' : '🗑 Cancel Order'}
+                        </button>
+                      )}
+                    </div>
                   </div>
+
+                  {isPending && (
+                    <p style={{ fontSize: '0.75rem', color: '#f39c12', marginBottom: 10, marginTop: -8 }}>
+                      ⚡ Tap ✕ to remove an item before kitchen starts
+                    </p>
+                  )}
+
                   {order.items.map((item) => (
-                    <div key={item.id} className="bill-row">
-                      <span>{item.name} × {item.quantity}</span>
-                      <span>₹{(item.price_at_order * item.quantity).toFixed(2)}</span>
+                    <div key={item.id} className="bill-row" style={{ alignItems: 'center' }}>
+                      <span style={{ flex: 1 }}>{item.name} × {item.quantity}</span>
+                      <span style={{ marginRight: isPending ? 10 : 0 }}>₹{(item.price_at_order * item.quantity).toFixed(2)}</span>
+                      {isPending && (
+                        <button
+                          onClick={() => removeItem(order.id, item.id, item.name)}
+                          disabled={removing === item.id}
+                          style={{ background: 'none', border: 'none', color: '#e74c3c', fontSize: '1.1rem', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
+                          title="Remove item"
+                        >
+                          {removing === item.id ? '…' : '✕'}
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
               );
             })}
 
-            {/* Totals */}
             <div className="card mb-16">
               <div className="bill-row">
                 <span>Subtotal</span>
@@ -139,18 +209,13 @@ export default function BillPage() {
               </div>
             </div>
 
-            {/* UPI Payment — always visible but prominent when food is ready */}
-            <div className="card" style={allReady || anyReady ? { border: '2px solid #27ae60', boxShadow: '0 4px 20px rgba(39,174,96,0.2)' } : {}}>
+            <div className="card" style={anyReady ? { border: '2px solid #27ae60', boxShadow: '0 4px 20px rgba(39,174,96,0.2)' } : {}}>
               {!anyReady && !allServed && (
                 <p className="text-muted text-center" style={{ marginBottom: 12, fontSize: '0.85rem' }}>
                   ⏳ You can pay once your food is ready
                 </p>
               )}
-              <UpiPayment
-                amount={grandTotal}
-                restaurantName={config.restaurantName}
-                upiId={config.upiId}
-              />
+              <UpiPayment amount={grandTotal} restaurantName={config.restaurantName} upiId={config.upiId} />
             </div>
 
             <Link

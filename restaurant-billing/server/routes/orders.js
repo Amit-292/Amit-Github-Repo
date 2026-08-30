@@ -107,6 +107,51 @@ router.get('/session/:sessionId', (req, res) => {
   res.json({ orders: result, total: Math.round(total * 100) / 100 });
 });
 
+// Cancel a single order item (only if order is still pending)
+router.delete('/:orderId/items/:itemId', (req, res) => {
+  const { orderId, itemId } = req.params;
+
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: 'Order not found' });
+  if (order.status !== 'pending') {
+    return res.status(400).json({ error: 'Cannot remove item — kitchen has already started this order.' });
+  }
+
+  const removeItem = db.transaction(() => {
+    db.prepare('DELETE FROM order_items WHERE id = ? AND order_id = ?').run(itemId, orderId);
+    // If no items left, cancel the whole order
+    const remaining = db.prepare('SELECT COUNT(*) as count FROM order_items WHERE order_id = ?').get(orderId);
+    if (remaining.count === 0) {
+      db.prepare('DELETE FROM orders WHERE id = ?').run(orderId);
+      return { orderCancelled: true };
+    }
+    return { orderCancelled: false };
+  });
+
+  const result = removeItem();
+  const io = req.app.get('io');
+  io.emit('order_updated', { orderId: Number(orderId), status: result.orderCancelled ? 'cancelled' : order.status });
+  res.json({ success: true, ...result });
+});
+
+// Cancel entire order (only if pending)
+router.delete('/:orderId', (req, res) => {
+  const { orderId } = req.params;
+
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: 'Order not found' });
+  if (order.status !== 'pending') {
+    return res.status(400).json({ error: 'Cannot cancel — kitchen has already started this order.' });
+  }
+
+  db.prepare('DELETE FROM order_items WHERE order_id = ?').run(orderId);
+  db.prepare('DELETE FROM orders WHERE id = ?').run(orderId);
+
+  const io = req.app.get('io');
+  io.emit('order_updated', { orderId: Number(orderId), status: 'cancelled' });
+  res.json({ success: true, message: 'Order cancelled' });
+});
+
 // Update order status
 router.patch('/:orderId/status', auth, (req, res) => {
   const { orderId } = req.params;
