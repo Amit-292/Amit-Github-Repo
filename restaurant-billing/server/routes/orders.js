@@ -107,6 +107,15 @@ router.get('/session/:sessionId', (req, res) => {
   res.json({ orders: result, total: Math.round(total * 100) / 100 });
 });
 
+// Close a session (customer paid)
+router.patch('/sessions/:sessionId/close', (req, res) => {
+  const { sessionId } = req.params;
+  const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(sessionId);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  db.prepare("UPDATE sessions SET status = 'closed' WHERE id = ?").run(sessionId);
+  res.json({ success: true, message: 'Session closed' });
+});
+
 // Cancel a single order item (only if order is still pending)
 router.delete('/:orderId/items/:itemId', (req, res) => {
   const { orderId, itemId } = req.params;

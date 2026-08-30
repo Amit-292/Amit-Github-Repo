@@ -80,9 +80,15 @@ export default function CustomerMenu() {
     socketRef.current = socket;
 
     socket.on('order_updated', (data) => {
-      setMyOrders((prev) =>
-        prev.map((o) => (o.id === data.orderId ? { ...o, status: data.status } : o))
-      );
+      if (data.status === 'cancelled') {
+        setMyOrders((prev) => prev.filter((o) => o.id !== data.orderId));
+      } else if (data.status === 'session_closed') {
+        setSession((prev) => prev ? { ...prev, status: 'closed' } : prev);
+      } else {
+        setMyOrders((prev) =>
+          prev.map((o) => (o.id === data.orderId ? { ...o, status: data.status } : o))
+        );
+      }
       if (data.status === 'ready') {
         showToast('🎉 Your food is ready! Please collect your order.');
       } else if (data.status === 'preparing') {
@@ -217,7 +223,14 @@ export default function CustomerMenu() {
       {/* ── MY ORDERS TAB ── */}
       {activeTab === 'orders' && (
         <div className="container" style={{ paddingTop: 16 }}>
-          {myOrders.length === 0 ? (
+          {session?.status === 'closed' ? (
+            <div className="card text-center" style={{ padding: '40px 20px' }}>
+              <div style={{ fontSize: '3rem', marginBottom: 12 }}>🙏</div>
+              <h3 style={{ color: '#27ae60', marginBottom: 8 }}>Payment Complete!</h3>
+              <p className="text-muted">Thank you for dining with us.</p>
+              <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: 8 }}>Scan the QR on your table to start a new order.</p>
+            </div>
+          ) : myOrders.length === 0 ? (
             <div className="card text-center" style={{ padding: '40px 20px' }}>
               <div style={{ fontSize: '3rem', marginBottom: 12 }}>🛒</div>
               <p className="text-muted">No orders yet.</p>
