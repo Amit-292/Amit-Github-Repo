@@ -66,8 +66,11 @@ npm run dev:client   # Client on port 5173
 | `http://localhost:5173/table/1` | Customer menu for Table 1 |
 | `http://localhost:5173/table/1/bill` | Bill page for Table 1 |
 | `http://localhost:5173/kitchen` | Kitchen display |
-| `http://localhost:5173/admin` | Admin dashboard |
-| `http://localhost:5173/admin/login` | Admin login |
+| `http://localhost:5173/admin` | Admin dashboard (local dev) |
+| `http://localhost:5173/admin/login` | Admin login (local dev) |
+| `https://restaurant-billing-production-a629.up.railway.app/admin/login` | **Admin login (LIVE)** |
+| `https://restaurant-billing-production-a629.up.railway.app/kitchen` | **Kitchen display (LIVE)** |
+| `https://restaurant-billing-production-a629.up.railway.app/table/1` | **Table 1 customer menu (LIVE)** |
 
 ## Default Credentials
 
