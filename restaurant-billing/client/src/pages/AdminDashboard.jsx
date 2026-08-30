@@ -102,7 +102,7 @@ export default function AdminDashboard() {
   return (
     <div className="admin-layout">
       <header className="admin-header">
-        <h1>🍽️ Restaurant Admin</h1>
+        <h1>🍽️ AS Confectioners — Admin</h1>
         <button className="btn btn-danger btn-sm" onClick={logout}>Logout</button>
       </header>
 

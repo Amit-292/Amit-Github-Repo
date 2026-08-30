@@ -17,7 +17,7 @@ export default function BillPage() {
   const { tableId } = useParams();
   const [orders, setOrders] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
-  const [config, setConfig] = useState({ upiId: '', restaurantName: 'My Restaurant' });
+  const [config, setConfig] = useState({ upiId: '', restaurantName: 'AS Confectioners' });
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState(null); // itemId or orderId being removed
 

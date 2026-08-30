@@ -30,7 +30,7 @@ export default function CustomerMenu() {
   const [loading, setLoading] = useState(true);
   const [placing, setPlacing] = useState(false);
   const [toast, setToast] = useState('');
-  const [restaurantName, setRestaurantName] = useState('My Restaurant');
+  const [restaurantName, setRestaurantName] = useState('AS Confectioners');
   const socketRef = useRef(null);
   const sessionRef = useRef(null);
 

@@ -25,7 +25,7 @@ app.use('/api/orders', require('./routes/orders'));
 app.get('/api/config', (req, res) => {
   res.json({
     upiId: process.env.UPI_ID || 'restaurant@upi',
-    restaurantName: process.env.RESTAURANT_NAME || 'My Restaurant',
+    restaurantName: process.env.RESTAURANT_NAME || 'AS Confectioners',
   });
 });
 

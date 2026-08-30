@@ -6,7 +6,7 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
   const [paid, setPaid] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(restaurantName)}&am=${amount}&tn=${encodeURIComponent('Restaurant Bill')}&cu=INR`;
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(restaurantName)}&am=${amount}&tn=${encodeURIComponent('AS Confectioners Bill')}&cu=INR`;
 
   const handlePaid = async () => {
     setLoading(true);
