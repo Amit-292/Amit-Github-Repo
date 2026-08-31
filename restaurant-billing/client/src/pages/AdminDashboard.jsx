@@ -183,11 +183,40 @@ export default function AdminDashboard() {
     setQrModal({ ...res.data, groupCount: count });
   };
 
+  // Password change state
+  const [pwModal, setPwModal] = useState(false);
+  const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [pwError, setPwError] = useState('');
+  const [pwSuccess, setPwSuccess] = useState(false);
+
+  const changePassword = async (e) => {
+    e.preventDefault();
+    setPwError('');
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
+      return setPwError('New passwords do not match');
+    }
+    try {
+      await api.patch('/auth/change-password', {
+        currentPassword: pwForm.currentPassword,
+        newPassword: pwForm.newPassword,
+      });
+      setPwSuccess(true);
+      setTimeout(() => { setPwModal(false); setPwSuccess(false); setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' }); }, 1800);
+    } catch (err) {
+      setPwError(err.response?.data?.error || 'Failed to change password');
+    }
+  };
+
   return (
     <div className="admin-layout">
       <header className="admin-header">
         <h1>🍽️ AS Confectioners — Admin</h1>
-        <button className="btn btn-danger btn-sm" onClick={logout}>Logout</button>
+        <div className="flex gap-8">
+          <button className="btn btn-sm btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)' }} onClick={() => { setPwModal(true); setPwError(''); setPwSuccess(false); }}>
+            🔑 Change Password
+          </button>
+          <button className="btn btn-danger btn-sm" onClick={logout}>Logout</button>
+        </div>
       </header>
 
       <div className="admin-tabs">
@@ -569,6 +598,66 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <p className="text-muted text-center">Failed to load QR codes. Please try again.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── CHANGE PASSWORD MODAL ── */}
+      {pwModal && (
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setPwModal(false)}>
+          <div className="modal" style={{ maxWidth: 420 }}>
+            <div className="modal-header">
+              <h3>🔑 Change Password</h3>
+              <button className="btn btn-sm" onClick={() => setPwModal(false)}>✕</button>
+            </div>
+            {pwSuccess ? (
+              <div className="text-center" style={{ padding: '24px 0' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>✅</div>
+                <p style={{ fontWeight: 600, color: '#27ae60' }}>Password changed successfully!</p>
+              </div>
+            ) : (
+              <form onSubmit={changePassword}>
+                <div className="form-group">
+                  <label>Current Password</label>
+                  <input
+                    className="form-control"
+                    type="password"
+                    value={pwForm.currentPassword}
+                    onChange={(e) => setPwForm({ ...pwForm, currentPassword: e.target.value })}
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="form-group">
+                  <label>New Password <span style={{ color: '#888', fontSize: '0.8rem' }}>(min. 6 characters)</span></label>
+                  <input
+                    className="form-control"
+                    type="password"
+                    value={pwForm.newPassword}
+                    onChange={(e) => setPwForm({ ...pwForm, newPassword: e.target.value })}
+                    required
+                    minLength={6}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Confirm New Password</label>
+                  <input
+                    className="form-control"
+                    type="password"
+                    value={pwForm.confirmPassword}
+                    onChange={(e) => setPwForm({ ...pwForm, confirmPassword: e.target.value })}
+                    required
+                  />
+                </div>
+                {pwError && (
+                  <p style={{ color: '#e74c3c', fontSize: '0.88rem', marginBottom: 12 }}>⚠️ {pwError}</p>
+                )}
+                <div className="flex gap-8">
+                  <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>Save New Password</button>
+                  <button type="button" className="btn btn-outline" onClick={() => setPwModal(false)}>Cancel</button>
+                </div>
+              </form>
             )}
           </div>
         </div>

@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -20,6 +21,25 @@ router.post('/login', (req, res) => {
     { expiresIn: '1d' }
   );
   res.json({ token, username: admin.username });
+});
+
+router.patch('/change-password', auth, (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: 'currentPassword and newPassword are required' });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'New password must be at least 6 characters' });
+  }
+
+  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(req.user.id);
+  if (!admin || !bcrypt.compareSync(currentPassword, admin.password_hash)) {
+    return res.status(401).json({ error: 'Current password is incorrect' });
+  }
+
+  const newHash = bcrypt.hashSync(newPassword, 10);
+  db.prepare('UPDATE admins SET password_hash = ? WHERE id = ?').run(newHash, admin.id);
+  res.json({ success: true, message: 'Password changed successfully' });
 });
 
 module.exports = router;
