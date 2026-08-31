@@ -33,6 +33,33 @@ export default function AdminDashboard() {
   // Feedback
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackSearch, setFeedbackSearch] = useState('');
+  const [selectedFeedbacks, setSelectedFeedbacks] = useState(new Set());
+
+  const toggleFeedbackSelect = (id) => {
+    setSelectedFeedbacks(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = (visibleIds) => {
+    if (visibleIds.every(id => selectedFeedbacks.has(id))) {
+      setSelectedFeedbacks(prev => { const n = new Set(prev); visibleIds.forEach(id => n.delete(id)); return n; });
+    } else {
+      setSelectedFeedbacks(prev => new Set([...prev, ...visibleIds]));
+    }
+  };
+
+  const deleteSelectedFeedbacks = async () => {
+    if (!selectedFeedbacks.size) return;
+    if (!confirm(`Delete ${selectedFeedbacks.size} feedback record(s)? This cannot be undone.`)) return;
+    try {
+      await api.delete('/feedback', { data: { ids: [...selectedFeedbacks] } });
+      setSelectedFeedbacks(new Set());
+      loadFeedbacks();
+    } catch (err) { alert('Failed to delete'); }
+  };
 
   // Per-bill WhatsApp phone numbers
   const [billPhones, setBillPhones] = useState({});
@@ -651,7 +678,7 @@ export default function AdminDashboard() {
                 <input
                   className="form-control"
                   style={{ width: 200 }}
-                  placeholder="Search name / phone / email..."
+                  placeholder="Search phone / email..."
                   value={feedbackSearch}
                   onChange={(e) => setFeedbackSearch(e.target.value)}
                 />
@@ -682,11 +709,37 @@ export default function AdminDashboard() {
                   ))}
                 </div>
 
-                {/* Feedback list */}
+                {/* Bulk delete toolbar */}
+                {selectedFeedbacks.size > 0 && (
+                  <div className="flex gap-8 mb-16" style={{ alignItems: 'center', padding: '10px 14px', background: '#fff3e0', border: '1px solid #f39c12', borderRadius: 8 }}>
+                    <span style={{ fontWeight: 600, color: '#7a5000' }}>{selectedFeedbacks.size} selected</span>
+                    <button className="btn btn-sm btn-danger" onClick={deleteSelectedFeedbacks}>
+                      🗑 Delete Selected
+                    </button>
+                    <button className="btn btn-sm btn-outline" onClick={() => setSelectedFeedbacks(new Set())}>
+                      Clear selection
+                    </button>
+                  </div>
+                )}
+
+                {/* Feedback table */}
                 <div style={{ overflowX: 'auto' }}>
                   <table className="data-table">
                     <thead>
                       <tr>
+                        <th style={{ width: 36 }}>
+                          {(() => {
+                            const visibleIds = feedbacks
+                              .filter(f => {
+                                if (!feedbackSearch) return true;
+                                const q = feedbackSearch.toLowerCase();
+                                return (f.contact||'').includes(q)||(f.email||'').toLowerCase().includes(q);
+                              })
+                              .map(f => f.id);
+                            const allChecked = visibleIds.length > 0 && visibleIds.every(id => selectedFeedbacks.has(id));
+                            return <input type="checkbox" checked={allChecked} onChange={() => toggleSelectAll(visibleIds)} />;
+                          })()}
+                        </th>
                         <th>Date</th>
                         <th>Table</th>
                         <th>Food ★</th>
@@ -703,25 +756,22 @@ export default function AdminDashboard() {
                         .filter(f => {
                           if (!feedbackSearch) return true;
                           const q = feedbackSearch.toLowerCase();
-                          return (f.contact || '').includes(q) || (f.email || '').toLowerCase().includes(q);
+                          return (f.contact||'').includes(q)||(f.email||'').toLowerCase().includes(q);
                         })
                         .map(f => (
-                          <tr key={f.id}>
+                          <tr key={f.id} style={{ background: selectedFeedbacks.has(f.id) ? '#fff8e1' : '' }}>
+                            <td>
+                              <input type="checkbox" checked={selectedFeedbacks.has(f.id)} onChange={() => toggleFeedbackSelect(f.id)} />
+                            </td>
                             <td style={{ fontSize: '0.78rem', whiteSpace: 'nowrap', color: '#888' }}>
                               {new Date(f.created_at + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </td>
                             <td style={{ whiteSpace: 'nowrap' }}>
                               T{f.table_number}{f.group_id && f.group_id !== '1' ? `/G${f.group_id}` : ''}
                             </td>
-                            <td style={{ textAlign: 'center' }}>
-                              {f.food_rating ? '★'.repeat(f.food_rating) : '—'}
-                            </td>
-                            <td style={{ textAlign: 'center' }}>
-                              {f.staff_rating ? '★'.repeat(f.staff_rating) : '—'}
-                            </td>
-                            <td style={{ maxWidth: 200, fontSize: '0.82rem' }}>
-                              {f.improvements || <span style={{ color: '#bbb' }}>—</span>}
-                            </td>
+                            <td style={{ textAlign: 'center', color: '#f39c12' }}>{f.food_rating ? '★'.repeat(f.food_rating) : '—'}</td>
+                            <td style={{ textAlign: 'center', color: '#f39c12' }}>{f.staff_rating ? '★'.repeat(f.staff_rating) : '—'}</td>
+                            <td style={{ maxWidth: 200, fontSize: '0.82rem' }}>{f.improvements || <span style={{ color: '#bbb' }}>—</span>}</td>
                             <td>{f.contact || <span style={{ color: '#bbb' }}>—</span>}</td>
                             <td style={{ fontSize: '0.82rem' }}>{f.email || <span style={{ color: '#bbb' }}>—</span>}</td>
                             <td style={{ fontSize: '0.82rem', whiteSpace: 'nowrap' }}>{f.dob || <span style={{ color: '#bbb' }}>—</span>}</td>

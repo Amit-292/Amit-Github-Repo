@@ -35,4 +35,13 @@ router.get('/', auth, (req, res) => {
   res.json(rows);
 });
 
+// Delete selected feedbacks (admin only)
+router.delete('/', auth, (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !ids.length) return res.status(400).json({ error: 'ids array required' });
+  const placeholders = ids.map(() => '?').join(',');
+  db.prepare(`DELETE FROM feedbacks WHERE id IN (${placeholders})`).run(...ids);
+  res.json({ success: true, deleted: ids.length });
+});
+
 module.exports = router;
