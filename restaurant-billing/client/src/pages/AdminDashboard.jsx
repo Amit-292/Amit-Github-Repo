@@ -30,6 +30,17 @@ export default function AdminDashboard() {
   const [bills, setBills] = useState([]);
   const [expandedBill, setExpandedBill] = useState(null);
 
+  // Feedback
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [feedbackSearch, setFeedbackSearch] = useState('');
+
+  const loadFeedbacks = useCallback(async () => {
+    try {
+      const res = await api.get('/feedback');
+      setFeedbacks(res.data);
+    } catch (err) { console.error(err); }
+  }, []);
+
   const getGroupCount = (tableId) => tableGroupCounts[tableId] || 1;
   const changeGroupCount = (tableId, delta) => {
     setTableGroupCounts(prev => ({
@@ -241,6 +252,14 @@ export default function AdminDashboard() {
         </button>
         <button className={`admin-tab ${activeTab === 'tables' ? 'active' : ''}`} onClick={() => setActiveTab('tables')}>
           🪑 Tables
+        </button>
+        <button className={`admin-tab ${activeTab === 'feedback' ? 'active' : ''}`} onClick={() => { setActiveTab('feedback'); loadFeedbacks(); }}>
+          💬 Feedback
+          {feedbacks.length > 0 && (
+            <span style={{ marginLeft: 6, background: '#2980b9', color: 'white', borderRadius: 10, padding: '1px 7px', fontSize: '0.75rem', fontWeight: 700 }}>
+              {feedbacks.length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -551,6 +570,100 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+          </>
+        )}
+
+        {/* ── FEEDBACK TAB ── */}
+        {activeTab === 'feedback' && (
+          <>
+            <div className="flex-between mb-16">
+              <h2>💬 Customer Feedback ({feedbacks.length})</h2>
+              <div className="flex gap-8">
+                <input
+                  className="form-control"
+                  style={{ width: 200 }}
+                  placeholder="Search name / phone / email..."
+                  value={feedbackSearch}
+                  onChange={(e) => setFeedbackSearch(e.target.value)}
+                />
+                <button className="btn btn-sm btn-outline" onClick={loadFeedbacks}>↻ Refresh</button>
+              </div>
+            </div>
+
+            {feedbacks.length === 0 ? (
+              <div className="card text-center" style={{ padding: '40px 20px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>💬</div>
+                <p className="text-muted">No feedback submitted yet.</p>
+              </div>
+            ) : (
+              <>
+                {/* Summary stats */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 20 }}>
+                  {[
+                    { label: 'Total Responses', value: feedbacks.length, icon: '📋' },
+                    { label: 'Avg Food Rating', value: (feedbacks.filter(f => f.food_rating).reduce((s, f) => s + f.food_rating, 0) / (feedbacks.filter(f => f.food_rating).length || 1)).toFixed(1) + ' ★', icon: '🍛' },
+                    { label: 'Avg Staff Rating', value: (feedbacks.filter(f => f.staff_rating).reduce((s, f) => s + f.staff_rating, 0) / (feedbacks.filter(f => f.staff_rating).length || 1)).toFixed(1) + ' ★', icon: '👨‍💼' },
+                    { label: 'With Contact', value: feedbacks.filter(f => f.contact).length, icon: '📞' },
+                  ].map(stat => (
+                    <div key={stat.label} className="card text-center" style={{ padding: '12px 8px' }}>
+                      <div style={{ fontSize: '1.4rem' }}>{stat.icon}</div>
+                      <div style={{ fontWeight: 700, fontSize: '1.2rem', margin: '4px 0' }}>{stat.value}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#888' }}>{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Feedback list */}
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Table</th>
+                        <th>Food ★</th>
+                        <th>Staff ★</th>
+                        <th>Improvements</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>DOB</th>
+                        <th>Anniversary</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {feedbacks
+                        .filter(f => {
+                          if (!feedbackSearch) return true;
+                          const q = feedbackSearch.toLowerCase();
+                          return (f.contact || '').includes(q) || (f.email || '').toLowerCase().includes(q);
+                        })
+                        .map(f => (
+                          <tr key={f.id}>
+                            <td style={{ fontSize: '0.78rem', whiteSpace: 'nowrap', color: '#888' }}>
+                              {new Date(f.created_at + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td style={{ whiteSpace: 'nowrap' }}>
+                              T{f.table_number}{f.group_id && f.group_id !== '1' ? `/G${f.group_id}` : ''}
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                              {f.food_rating ? '★'.repeat(f.food_rating) : '—'}
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                              {f.staff_rating ? '★'.repeat(f.staff_rating) : '—'}
+                            </td>
+                            <td style={{ maxWidth: 200, fontSize: '0.82rem' }}>
+                              {f.improvements || <span style={{ color: '#bbb' }}>—</span>}
+                            </td>
+                            <td>{f.contact || <span style={{ color: '#bbb' }}>—</span>}</td>
+                            <td style={{ fontSize: '0.82rem' }}>{f.email || <span style={{ color: '#bbb' }}>—</span>}</td>
+                            <td style={{ fontSize: '0.82rem', whiteSpace: 'nowrap' }}>{f.dob || <span style={{ color: '#bbb' }}>—</span>}</td>
+                            <td style={{ fontSize: '0.82rem', whiteSpace: 'nowrap' }}>{f.anniversary || <span style={{ color: '#bbb' }}>—</span>}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
