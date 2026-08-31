@@ -104,6 +104,57 @@ export default function BillPage() {
   const anyReady  = orders.some((o) => o.status === 'ready');
   const allServed = orders.length > 0 && orders.every((o) => o.status === 'served');
 
+  // WhatsApp bill sharing
+  const [waModal, setWaModal] = useState(false);
+  const [waPhone, setWaPhone] = useState('');
+
+  const buildBillText = () => {
+    const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const lines = [
+      `🍽️ *${config.restaurantName}*`,
+      `📅 ${date} | Table ${tableId}${groupId !== '1' ? ` · Group ${groupId}` : ''}`,
+      ``,
+      `*ORDER SUMMARY*`,
+      `━━━━━━━━━━━━━━━━━━━`,
+    ];
+    orders.filter(o => o.status !== 'pending_approval').forEach((order, idx) => {
+      if (orders.length > 1) lines.push(`_Order #${idx + 1}_`);
+      order.items.forEach(item => {
+        lines.push(`• ${item.name} × ${item.quantity}  ₹${(item.price_at_order * item.quantity).toFixed(2)}`);
+      });
+    });
+    lines.push(`━━━━━━━━━━━━━━━━━━━`);
+    lines.push(`Subtotal: ₹${subtotal.toFixed(2)}`);
+    lines.push(`GST (5%): ₹${gst.toFixed(2)}`);
+    lines.push(`*TOTAL: ₹${grandTotal.toFixed(2)}*`);
+    lines.push(`━━━━━━━━━━━━━━━━━━━`);
+    lines.push(`Thank you for dining with us! 🙏`);
+    lines.push(`Visit again soon 😊`);
+    return lines.join('\n');
+  };
+
+  const sendWhatsApp = () => {
+    const text = buildBillText();
+    // Normalize Indian number: strip leading 0 or +91, add 91
+    const digits = waPhone.replace(/\D/g, '');
+    const phone = digits.startsWith('91') ? digits : '91' + digits.replace(/^0/, '');
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+    setWaModal(false);
+  };
+
+  const shareNative = async () => {
+    const text = buildBillText();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `Bill from ${config.restaurantName}`, text });
+        return;
+      } catch (_) {}
+    }
+    // Fallback: open WhatsApp without pre-filled number
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   if (loading) return <div className="spinner" />;
 
   return (
@@ -210,6 +261,24 @@ export default function BillPage() {
                 <span>Grand Total</span>
                 <span>₹{grandTotal.toFixed(2)}</span>
               </div>
+              {/* Send bill buttons */}
+              <div className="flex gap-8 mt-16">
+                <button
+                  className="btn w-full"
+                  style={{ background: '#25D366', color: 'white', border: 'none', fontWeight: 600 }}
+                  onClick={() => setWaModal(true)}
+                >
+                  📲 Send Bill to WhatsApp
+                </button>
+                <button
+                  className="btn btn-outline"
+                  style={{ whiteSpace: 'nowrap' }}
+                  onClick={shareNative}
+                  title="Share via any app"
+                >
+                  ↗ Share
+                </button>
+              </div>
             </div>
 
             <div className="card" style={anyReady ? { border: '2px solid #27ae60', boxShadow: '0 4px 20px rgba(39,174,96,0.2)' } : {}}>
@@ -231,6 +300,47 @@ export default function BillPage() {
           </>
         )}
       </div>
+
+      {/* WhatsApp bill modal */}
+      {waModal && (
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setWaModal(false)}>
+          <div className="modal" style={{ maxWidth: 400 }}>
+            <div className="modal-header">
+              <h3>📲 Send Bill to WhatsApp</h3>
+              <button className="btn btn-sm" onClick={() => setWaModal(false)}>✕</button>
+            </div>
+            <p className="text-muted" style={{ fontSize: '0.88rem', marginBottom: 16 }}>
+              Enter your WhatsApp number — the bill will open in WhatsApp ready to send to yourself.
+            </p>
+            <div className="form-group">
+              <label style={{ fontWeight: 600 }}>📞 WhatsApp Number</label>
+              <div className="flex gap-8">
+                <span style={{ display: 'flex', alignItems: 'center', padding: '0 10px', background: '#f5f5f5', border: '1px solid #ddd', borderRadius: 8, fontWeight: 600, fontSize: '0.9rem' }}>+91</span>
+                <input
+                  className="form-control"
+                  type="tel"
+                  placeholder="10-digit mobile number"
+                  maxLength={10}
+                  value={waPhone}
+                  onChange={(e) => setWaPhone(e.target.value.replace(/\D/g, ''))}
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="flex gap-8 mt-16">
+              <button
+                className="btn w-full"
+                style={{ background: '#25D366', color: 'white', border: 'none', fontWeight: 600 }}
+                onClick={sendWhatsApp}
+                disabled={waPhone.length < 10}
+              >
+                Open in WhatsApp →
+              </button>
+              <button className="btn btn-outline" onClick={() => setWaModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
