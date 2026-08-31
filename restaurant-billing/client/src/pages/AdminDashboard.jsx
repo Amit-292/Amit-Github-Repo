@@ -34,6 +34,48 @@ export default function AdminDashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackSearch, setFeedbackSearch] = useState('');
 
+  // Per-bill WhatsApp phone numbers
+  const [billPhones, setBillPhones] = useState({});
+
+  const buildAdminBillText = (bill) => {
+    const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const lines = [
+      `🍽️ *AS Confectioners*`,
+      `📅 ${date} | Table ${bill.tableNumber}${bill.groupId && bill.groupId !== '1' ? ` · Group ${bill.groupId}` : ''}`,
+      ``,
+      `*ORDER SUMMARY*`,
+      `━━━━━━━━━━━━━━━━━━━`,
+    ];
+    const allItems = bill.orders.flatMap(o => o.items || []);
+    const itemMap = {};
+    allItems.forEach(item => {
+      if (itemMap[item.name]) {
+        itemMap[item.name].quantity += item.quantity;
+        itemMap[item.name].total += item.price_at_order * item.quantity;
+      } else {
+        itemMap[item.name] = { quantity: item.quantity, total: item.price_at_order * item.quantity };
+      }
+    });
+    Object.entries(itemMap).forEach(([name, v]) => {
+      lines.push(`• ${name} × ${v.quantity}  ₹${v.total.toFixed(2)}`);
+    });
+    lines.push(`━━━━━━━━━━━━━━━━━━━`);
+    lines.push(`Subtotal: ₹${bill.subtotal.toFixed(2)}`);
+    lines.push(`GST (5%): ₹${(bill.grandTotal - bill.subtotal).toFixed(2)}`);
+    lines.push(`*TOTAL: ₹${bill.grandTotal.toFixed(2)}*`);
+    lines.push(`━━━━━━━━━━━━━━━━━━━`);
+    lines.push(`Thank you for dining with us! 🙏`);
+    return lines.join('\n');
+  };
+
+  const sendBillWhatsApp = (bill) => {
+    const raw = (billPhones[bill.sessionId] || '').replace(/\D/g, '');
+    if (raw.length < 10) return;
+    const phone = raw.startsWith('91') ? raw : '91' + raw.replace(/^0/, '');
+    const text = buildAdminBillText(bill);
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   const loadFeedbacks = useCallback(async () => {
     try {
       const res = await api.get('/feedback');
@@ -381,6 +423,33 @@ export default function AdminDashboard() {
                         <div className="bill-row"><span>Subtotal</span><span>₹{bill.subtotal.toFixed(2)}</span></div>
                         <div className="bill-row"><span>GST (5%)</span><span>₹{(bill.grandTotal - bill.subtotal).toFixed(2)}</span></div>
                         <div className="bill-row" style={{ fontWeight: 700, fontSize: '1rem' }}><span>Grand Total</span><span>₹{bill.grandTotal.toFixed(2)}</span></div>
+
+                        {/* Send bill to customer WhatsApp */}
+                        <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed #eee' }}>
+                          <p style={{ fontSize: '0.82rem', fontWeight: 600, marginBottom: 8, color: '#444' }}>
+                            📲 Send bill to customer's WhatsApp
+                          </p>
+                          <div className="flex gap-8">
+                            <span style={{ display: 'flex', alignItems: 'center', padding: '0 8px', background: '#f5f5f5', border: '1px solid #ddd', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap' }}>+91</span>
+                            <input
+                              className="form-control"
+                              type="tel"
+                              placeholder="Customer's WhatsApp number"
+                              maxLength={10}
+                              value={billPhones[bill.sessionId] || ''}
+                              onChange={(e) => setBillPhones(prev => ({ ...prev, [bill.sessionId]: e.target.value.replace(/\D/g, '') }))}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <button
+                              className="btn"
+                              style={{ background: '#25D366', color: 'white', border: 'none', fontWeight: 600, whiteSpace: 'nowrap' }}
+                              disabled={(billPhones[bill.sessionId] || '').length < 10}
+                              onClick={(e) => { e.stopPropagation(); sendBillWhatsApp(bill); }}
+                            >
+                              Send →
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
