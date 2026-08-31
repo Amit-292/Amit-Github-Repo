@@ -62,6 +62,21 @@ db.exec(`
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
   );
+
+  CREATE TABLE IF NOT EXISTS feedbacks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id INTEGER,
+    table_number TEXT,
+    group_id TEXT,
+    food_rating INTEGER,
+    staff_rating INTEGER,
+    improvements TEXT DEFAULT '',
+    contact TEXT DEFAULT '',
+    email TEXT DEFAULT '',
+    dob TEXT DEFAULT '',
+    anniversary TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 // Migrate: add group_id to sessions if it doesn't exist yet

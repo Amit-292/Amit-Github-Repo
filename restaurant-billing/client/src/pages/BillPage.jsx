@@ -218,7 +218,7 @@ export default function BillPage() {
                   ⏳ You can pay once your food is ready
                 </p>
               )}
-              <UpiPayment amount={grandTotal} restaurantName={config.restaurantName} upiId={config.upiId} sessionId={sessionId} tableId={tableId} />
+              <UpiPayment amount={grandTotal} restaurantName={config.restaurantName} upiId={config.upiId} sessionId={sessionId} tableId={tableId} groupId={groupId} />
             </div>
 
             <Link

@@ -20,6 +20,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/menu', require('./routes/menu'));
 app.use('/api/tables', require('./routes/tables'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/feedback', require('./routes/feedback'));
 
 // Config endpoint
 app.get('/api/config', (req, res) => {
