@@ -117,11 +117,21 @@ export default function BillPage() {
       `*ORDER SUMMARY*`,
       `━━━━━━━━━━━━━━━━━━━`,
     ];
-    orders.filter(o => o.status !== 'pending_approval').forEach((order, idx) => {
-      if (orders.length > 1) lines.push(`_Order #${idx + 1}_`);
-      order.items.forEach(item => {
-        lines.push(`• ${item.name} × ${item.quantity}  ₹${(item.price_at_order * item.quantity).toFixed(2)}`);
-      });
+    // Include items from all orders (any status)
+    const allItems = orders.flatMap(o => o.items || []);
+    // Consolidate duplicate items
+    const itemMap = {};
+    allItems.forEach(item => {
+      const key = item.name;
+      if (itemMap[key]) {
+        itemMap[key].quantity += item.quantity;
+        itemMap[key].total += item.price_at_order * item.quantity;
+      } else {
+        itemMap[key] = { name: item.name, quantity: item.quantity, total: item.price_at_order * item.quantity };
+      }
+    });
+    Object.values(itemMap).forEach(item => {
+      lines.push(`• ${item.name} × ${item.quantity}  ₹${item.total.toFixed(2)}`);
     });
     lines.push(`━━━━━━━━━━━━━━━━━━━`);
     lines.push(`Subtotal: ₹${subtotal.toFixed(2)}`);
