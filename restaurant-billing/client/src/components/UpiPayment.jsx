@@ -189,18 +189,31 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
       <p className="text-muted" style={{ marginBottom: 4 }}>Total Amount</p>
       <div className="upi-amount">₹{amount.toFixed(2)}</div>
 
-      <a href={upiUrl} className="upi-btn">
-        💳 Pay ₹{amount.toFixed(2)} via UPI
-      </a>
-
+      {/* QR — primary & most reliable method */}
+      <p style={{ fontWeight: 700, fontSize: '0.95rem', margin: '12px 0 6px' }}>
+        📷 Scan QR to Pay <span style={{ fontWeight: 400, color: '#888', fontSize: '0.82rem' }}>(works on all UPI apps)</span>
+      </p>
       <div className="upi-qr">
-        <QRCodeSVG value={upiUrl} size={180} level="M" includeMargin />
+        <QRCodeSVG value={upiUrl} size={200} level="M" includeMargin />
       </div>
 
-      <p className="upi-note">📱 Scan with any UPI app or tap the button on mobile</p>
-      <p className="upi-note" style={{ marginTop: 4 }}>
-        Pay to: <strong>{upiId}</strong>
-      </p>
+      {/* UPI ID copy */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, margin: '8px 0' }}>
+        <span className="upi-note">Pay to: <strong>{upiId}</strong></span>
+        <button
+          onClick={() => { navigator.clipboard.writeText(upiId); }}
+          style={{ background: 'none', border: '1px solid #ddd', borderRadius: 6, padding: '2px 8px', fontSize: '0.78rem', cursor: 'pointer', color: '#555' }}
+          title="Copy UPI ID"
+        >📋 Copy</button>
+      </div>
+
+      {/* Deep link — secondary, may not work on all apps */}
+      <div style={{ marginTop: 12, padding: '10px 12px', background: '#fff8e1', borderRadius: 8, border: '1px solid #f39c12', fontSize: '0.82rem', color: '#7a5000', marginBottom: 12 }}>
+        ⚠️ <strong>PhonePe users:</strong> Scan the QR code above or open PhonePe → Pay → enter UPI ID manually. The button below may be blocked by PhonePe's security policy.
+      </div>
+      <a href={upiUrl} className="upi-btn" style={{ opacity: 0.85 }}>
+        💳 Open UPI App (tap to pay)
+      </a>
 
       <button
         className="btn btn-success mt-16 w-full"
