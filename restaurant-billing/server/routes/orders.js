@@ -4,24 +4,26 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get or create active session for a table
-router.get('/sessions/:tableId', (req, res) => {
+// Get or create active session for a table + group
+// groupId defaults to '1' for backward compatibility (single-QR tables)
+router.get('/sessions/:tableId/:groupId?', (req, res) => {
   const { tableId } = req.params;
+  const groupId = req.params.groupId || '1';
   const table = db.prepare('SELECT * FROM tables WHERE table_number = ?').get(tableId);
   if (!table) return res.status(404).json({ error: 'Table not found' });
 
   let session = db.prepare(
-    "SELECT * FROM sessions WHERE table_id = ? AND status = 'active' ORDER BY created_at DESC LIMIT 1"
-  ).get(table.id);
+    "SELECT * FROM sessions WHERE table_id = ? AND group_id = ? AND status = 'active' ORDER BY created_at DESC LIMIT 1"
+  ).get(table.id, groupId);
 
   if (!session) {
     const result = db.prepare(
-      "INSERT INTO sessions (table_id, status) VALUES (?, 'active')"
-    ).run(table.id);
+      "INSERT INTO sessions (table_id, group_id, status) VALUES (?, ?, 'active')"
+    ).run(table.id, groupId);
     session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(result.lastInsertRowid);
   }
 
-  res.json({ id: session.id, tableId: table.table_number, tableDbId: table.id, status: session.status, created_at: session.created_at });
+  res.json({ id: session.id, tableId: table.table_number, tableDbId: table.id, groupId: session.group_id, status: session.status, created_at: session.created_at });
 });
 
 // Place a new order

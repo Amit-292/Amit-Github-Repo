@@ -17,7 +17,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/admin/login" replace />} />
         <Route path="/table/:tableId" element={<CustomerMenu />} />
+        <Route path="/table/:tableId/:groupId" element={<CustomerMenu />} />
         <Route path="/table/:tableId/bill" element={<BillPage />} />
+        <Route path="/table/:tableId/:groupId/bill" element={<BillPage />} />
         <Route path="/kitchen" element={<KitchenDisplay />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route

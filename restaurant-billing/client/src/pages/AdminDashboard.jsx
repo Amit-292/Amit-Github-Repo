@@ -18,7 +18,16 @@ export default function AdminDashboard() {
   // Tables state
   const [tables, setTables] = useState([]);
   const [tableForm, setTableForm] = useState({ table_number: '', label: '' });
-  const [qrModal, setQrModal] = useState(null);
+  const [qrModal, setQrModal] = useState(null); // { tableNumber, tableLabel, qrCodes: [{group, qr, url}], groupCount }
+  const [tableGroupCounts, setTableGroupCounts] = useState({}); // per-table group count, default 1
+
+  const getGroupCount = (tableId) => tableGroupCounts[tableId] || 1;
+  const changeGroupCount = (tableId, delta) => {
+    setTableGroupCounts(prev => ({
+      ...prev,
+      [tableId]: Math.min(Math.max((prev[tableId] || 1) + delta, 1), 8),
+    }));
+  };
 
   useEffect(() => {
     loadMenu();
@@ -95,8 +104,9 @@ export default function AdminDashboard() {
   };
 
   const showQR = async (table) => {
-    const res = await api.get(`/tables/${table.id}/qr`);
-    setQrModal({ ...res.data, tableLabel: table.label });
+    const count = getGroupCount(table.id);
+    const res = await api.get(`/tables/${table.id}/qr?count=${count}`);
+    setQrModal({ ...res.data, groupCount: count });
   };
 
   return (
@@ -217,6 +227,12 @@ export default function AdminDashboard() {
               <h2>Tables ({tables.length})</h2>
             </div>
 
+            <div className="card mb-16" style={{ background: '#fff8e1', border: '1px solid #f39c12' }}>
+              <p style={{ margin: 0, fontSize: '0.88rem', color: '#7a5000' }}>
+                💡 <strong>Multiple families at one table?</strong> Set the number of groups for that table, then click <em>Show QR Codes</em> to get a separate QR for each family.
+              </p>
+            </div>
+
             <div className="card mb-16">
               <h3 style={{ marginBottom: 16 }}>Add New Table</h3>
               <form onSubmit={addTable} className="flex gap-8" style={{ flexWrap: 'wrap' }}>
@@ -245,24 +261,48 @@ export default function AdminDashboard() {
                   <tr>
                     <th>Table #</th>
                     <th>Label</th>
-                    <th>Customer URL</th>
+                    <th style={{ minWidth: 160 }}>Groups at table</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {tables.map((table) => (
-                    <tr key={table.id}>
-                      <td><strong>Table {table.table_number}</strong></td>
-                      <td>{table.label || '—'}</td>
-                      <td style={{ fontSize: '0.8rem', color: '#888' }}>/table/{table.table_number}</td>
-                      <td>
-                        <div className="flex gap-8">
-                          <button className="btn btn-sm btn-primary" onClick={() => showQR(table)}>QR Code</button>
-                          <button className="btn btn-sm btn-danger" onClick={() => deleteTable(table.id)}>Delete</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {tables.map((table) => {
+                    const gc = getGroupCount(table.id);
+                    return (
+                      <tr key={table.id}>
+                        <td><strong>Table {table.table_number}</strong></td>
+                        <td>{table.label || '—'}</td>
+                        <td>
+                          <div className="flex gap-8" style={{ alignItems: 'center' }}>
+                            <button
+                              className="btn btn-sm btn-outline"
+                              style={{ padding: '2px 10px', fontWeight: 700 }}
+                              onClick={() => changeGroupCount(table.id, -1)}
+                              disabled={gc <= 1}
+                            >−</button>
+                            <span style={{ fontWeight: 700, minWidth: 20, textAlign: 'center' }}>{gc}</span>
+                            <button
+                              className="btn btn-sm btn-outline"
+                              style={{ padding: '2px 10px', fontWeight: 700 }}
+                              onClick={() => changeGroupCount(table.id, 1)}
+                              disabled={gc >= 8}
+                            >+</button>
+                            <span style={{ fontSize: '0.78rem', color: '#888' }}>
+                              {gc === 1 ? 'QR code' : 'QR codes'}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="flex gap-8">
+                            <button className="btn btn-sm btn-primary" onClick={() => showQR(table)}>
+                              Show QR{gc > 1 ? 's' : ''}
+                            </button>
+                            <button className="btn btn-sm btn-danger" onClick={() => deleteTable(table.id)}>Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -272,23 +312,48 @@ export default function AdminDashboard() {
 
       {qrModal && (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setQrModal(null)}>
-          <div className="modal text-center">
+          <div className="modal" style={{ maxWidth: 640, width: '95vw' }}>
             <div className="modal-header">
-              <h3>QR Code — Table {qrModal.tableNumber}</h3>
+              <h3>
+                🪑 Table {qrModal.tableNumber}
+                {qrModal.tableLabel ? ` — ${qrModal.tableLabel}` : ''}
+                {qrModal.groupCount > 1 ? ` · ${qrModal.groupCount} Groups` : ''}
+              </h3>
               <button className="btn btn-sm" onClick={() => setQrModal(null)}>✕</button>
             </div>
-            <img src={qrModal.qr} alt={`QR for Table ${qrModal.tableNumber}`} style={{ width: 240, height: 240, margin: '16px auto', display: 'block', borderRadius: 8 }} />
-            <p className="text-muted mt-8" style={{ wordBreak: 'break-all', fontSize: '0.8rem' }}>
-              {qrModal.url}
-            </p>
-            <div className="flex gap-8 mt-16" style={{ justifyContent: 'center' }}>
-              <a href={qrModal.qr} download={`table-${qrModal.tableNumber}-qr.png`} className="btn btn-success">
-                ⬇️ Download QR
-              </a>
-              <button className="btn btn-outline" onClick={() => navigator.clipboard.writeText(qrModal.url)}>
-                📋 Copy URL
-              </button>
-            </div>
+
+            {qrModal.groupCount > 1 && (
+              <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: 16, marginTop: -8 }}>
+                Print and place each QR code in front of the respective family — orders stay completely separate.
+              </p>
+            )}
+
+            {/* QR code grid */}
+            {Array.isArray(qrModal.qrCodes) && qrModal.qrCodes.length > 0 ? (
+              <div style={{ display: 'grid', gridTemplateColumns: qrModal.qrCodes.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+                {qrModal.qrCodes.map(({ group, qr, url }) => (
+                  <div key={group} className="card text-center" style={{ padding: 16 }}>
+                    {qrModal.groupCount > 1 && (
+                      <div style={{ fontWeight: 700, marginBottom: 8, fontSize: '1rem', color: '#e67e22' }}>
+                        👨‍👩‍👧 Family / Group {group}
+                      </div>
+                    )}
+                    <img src={qr} alt={`QR Group ${group}`} style={{ width: 190, height: 190, margin: '0 auto', display: 'block', borderRadius: 6 }} />
+                    <p className="text-muted" style={{ wordBreak: 'break-all', fontSize: '0.7rem', margin: '8px 0' }}>{url}</p>
+                    <div className="flex gap-8" style={{ justifyContent: 'center', marginTop: 8 }}>
+                      <a href={qr} download={`table-${qrModal.tableNumber}${qrModal.groupCount > 1 ? `-group${group}` : ''}-qr.png`} className="btn btn-sm btn-success">
+                        ⬇️ Download
+                      </a>
+                      <button className="btn btn-sm btn-outline" onClick={() => navigator.clipboard.writeText(url)}>
+                        📋 Copy URL
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted text-center">Failed to load QR codes. Please try again.</p>
+            )}
           </div>
         </div>
       )}

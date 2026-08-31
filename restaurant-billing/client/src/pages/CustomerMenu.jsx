@@ -19,7 +19,7 @@ const STATUS_META = {
 };
 
 export default function CustomerMenu() {
-  const { tableId } = useParams();
+  const { tableId, groupId = '1' } = useParams();
   const [session, setSession] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -48,7 +48,7 @@ export default function CustomerMenu() {
     const init = async () => {
       try {
         const [sessionRes, menuRes, configRes] = await Promise.all([
-          api.get(`/orders/sessions/${tableId}`),
+          api.get(`/orders/sessions/${tableId}/${groupId}`),
           api.get('/menu?available=true'),
           api.get('/config'),
         ]);
@@ -56,7 +56,7 @@ export default function CustomerMenu() {
         const s = sessionRes.data;
         setSession(s);
         sessionRef.current = s;
-        localStorage.setItem(`session_${tableId}`, s.id);
+        localStorage.setItem(`session_${tableId}_${groupId}`, s.id);
 
         const items = menuRes.data;
         setMenuItems(items);
@@ -161,11 +161,13 @@ export default function CustomerMenu() {
         <div className="header-inner">
           <div>
             <h1>🍽️ {restaurantName}</h1>
-            <p style={{ opacity: 0.85, fontSize: '0.85rem' }}>Table {tableId}</p>
+            <p style={{ opacity: 0.85, fontSize: '0.85rem' }}>
+                Table {tableId}{groupId !== '1' ? ` · Group ${groupId}` : ''}
+              </p>
           </div>
           {myOrders.length > 0 && (
             <Link
-              to={`/table/${tableId}/bill`}
+              to={`/table/${tableId}/${groupId}/bill`}
               className="btn"
               style={{ background: hasReadyOrders ? '#27ae60' : 'rgba(255,255,255,0.25)', color: 'white', fontSize: '0.8rem', padding: '8px 14px', borderRadius: 8, fontWeight: 600 }}
             >
@@ -291,7 +293,7 @@ export default function CustomerMenu() {
                 </div>
               )}
 
-              <Link to={`/table/${tableId}/bill`} className="btn btn-primary w-full" style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+              <Link to={`/table/${tableId}/${groupId}/bill`} className="btn btn-primary w-full" style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
                 🧾 View Bill &amp; Pay
               </Link>
 

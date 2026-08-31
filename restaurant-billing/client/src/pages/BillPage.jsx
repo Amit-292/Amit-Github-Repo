@@ -14,14 +14,14 @@ const STATUS_META = {
 const GST_RATE = 0.05;
 
 export default function BillPage() {
-  const { tableId } = useParams();
+  const { tableId, groupId = '1' } = useParams();
   const [orders, setOrders] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [config, setConfig] = useState({ upiId: '', restaurantName: 'AS Confectioners' });
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState(null); // itemId or orderId being removed
 
-  const sessionId = localStorage.getItem(`session_${tableId}`);
+  const sessionId = localStorage.getItem(`session_${tableId}_${groupId}`);
 
   const loadBill = useCallback(async () => {
     if (!sessionId) { setLoading(false); return; }
@@ -111,10 +111,12 @@ export default function BillPage() {
         <div className="header-inner">
           <div>
             <h1>🧾 Your Bill</h1>
-            <p style={{ opacity: 0.85, fontSize: '0.85rem' }}>Table {tableId}</p>
+            <p style={{ opacity: 0.85, fontSize: '0.85rem' }}>
+                Table {tableId}{groupId !== '1' ? ` · Group ${groupId}` : ''}
+              </p>
           </div>
           <Link
-            to={`/table/${tableId}`}
+            to={`/table/${tableId}/${groupId}`}
             className="btn"
             style={{ background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '0.85rem', padding: '8px 14px', borderRadius: 8 }}
           >
@@ -128,7 +130,7 @@ export default function BillPage() {
           <div className="card text-center" style={{ padding: '40px 20px' }}>
             <div style={{ fontSize: '3rem', marginBottom: 16 }}>🛒</div>
             <p className="text-muted">No orders yet. Head back to the menu!</p>
-            <Link to={`/table/${tableId}`} className="btn btn-primary mt-16" style={{ display: 'inline-flex' }}>
+            <Link to={`/table/${tableId}/${groupId}`} className="btn btn-primary mt-16" style={{ display: 'inline-flex' }}>
               Go to Menu
             </Link>
           </div>
@@ -219,7 +221,7 @@ export default function BillPage() {
             </div>
 
             <Link
-              to={`/table/${tableId}`}
+              to={`/table/${tableId}/${groupId}`}
               className="btn w-full"
               style={{ display: 'flex', justifyContent: 'center', marginTop: 12, background: 'white', border: '1.5px solid #e67e22', color: '#e67e22' }}
             >

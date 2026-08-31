@@ -35,15 +35,20 @@ router.delete('/:id', auth, (req, res) => {
 
 router.get('/:tableId/qr', auth, async (req, res) => {
   const { tableId } = req.params;
+  const count = Math.min(Math.max(parseInt(req.query.count) || 1, 1), 10);
   const table = db.prepare('SELECT * FROM tables WHERE id = ?').get(tableId);
   if (!table) return res.status(404).json({ error: 'Table not found' });
 
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-  const tableUrl = `${clientUrl}/table/${table.table_number}`;
 
   try {
-    const qrDataUrl = await QRCode.toDataURL(tableUrl, { width: 300, margin: 2 });
-    res.json({ qr: qrDataUrl, tableNumber: table.table_number, url: tableUrl });
+    const qrCodes = [];
+    for (let g = 1; g <= count; g++) {
+      const url = `${clientUrl}/table/${table.table_number}/${g}`;
+      const qr = await QRCode.toDataURL(url, { width: 300, margin: 2 });
+      qrCodes.push({ group: g, qr, url });
+    }
+    res.json({ qrCodes, tableNumber: table.table_number, tableLabel: table.label });
   } catch (err) {
     res.status(500).json({ error: 'Failed to generate QR code' });
   }

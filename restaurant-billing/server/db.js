@@ -64,6 +64,11 @@ db.exec(`
   );
 `);
 
+// Migrate: add group_id to sessions if it doesn't exist yet
+try {
+  db.exec("ALTER TABLE sessions ADD COLUMN group_id TEXT NOT NULL DEFAULT '1'");
+} catch (_) { /* column already exists */ }
+
 // Seed default admin
 const passwordHash = bcrypt.hashSync('admin123', 10);
 db.prepare(`INSERT OR IGNORE INTO admins (username, password_hash) VALUES (?, ?)`)
