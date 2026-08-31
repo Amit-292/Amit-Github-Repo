@@ -32,7 +32,10 @@ export default function KitchenDisplay() {
 
     const socket = io();
     socket.on('new_order', (order) => {
-      setOrders((prev) => [...prev, order]);
+      // Only show orders that have been approved by admin
+      if (order.status !== 'pending_approval') {
+        setOrders((prev) => [...prev, order]);
+      }
     });
     socket.on('order_updated', ({ orderId, status }) => {
       if (status === 'served') {

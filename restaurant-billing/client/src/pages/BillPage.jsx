@@ -5,6 +5,7 @@ import api from '../api';
 import UpiPayment from '../components/UpiPayment';
 
 const STATUS_META = {
+  pending_approval: { label: 'Awaiting Confirmation', icon: '🔔', color: '#8e44ad' },
   pending:   { label: 'Order Received', icon: '🕐', color: '#f39c12' },
   preparing: { label: 'Being Prepared', icon: '👨‍🍳', color: '#e67e22' },
   ready:     { label: 'Ready! 🎉',      icon: '🎉', color: '#27ae60' },
@@ -148,7 +149,7 @@ export default function BillPage() {
 
             {orders.map((order, idx) => {
               const meta = STATUS_META[order.status] || STATUS_META.pending;
-              const isPending = order.status === 'pending';
+              const isPending = order.status === 'pending' || order.status === 'pending_approval';
               return (
                 <div key={order.id} className="card mb-16">
                   <div className="flex-between mb-16">

@@ -26,7 +26,7 @@ router.get('/sessions/:tableId/:groupId?', (req, res) => {
   res.json({ id: session.id, tableId: table.table_number, tableDbId: table.id, groupId: session.group_id, status: session.status, created_at: session.created_at });
 });
 
-// Place a new order
+// Place a new order — goes to admin for approval first
 router.post('/', (req, res) => {
   const { sessionId, tableId, items } = req.body;
   if (!sessionId || !tableId || !items || !items.length) {
@@ -41,7 +41,7 @@ router.post('/', (req, res) => {
 
   const insertOrder = db.transaction(() => {
     const orderResult = db.prepare(
-      "INSERT INTO orders (session_id, table_id, status) VALUES (?, ?, 'pending')"
+      "INSERT INTO orders (session_id, table_id, status) VALUES (?, ?, 'pending_approval')"
     ).run(sessionId, table.id);
     const orderId = orderResult.lastInsertRowid;
 
@@ -69,17 +69,19 @@ router.post('/', (req, res) => {
     const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
 
     const io = req.app.get('io');
-    io.emit('new_order', {
+    // Notify admin — order needs approval before going to kitchen
+    io.emit('order_pending_approval', {
       orderId,
       tableNumber: table.table_number,
       tableLabel: table.label,
+      groupId: session.group_id,
       sessionId,
-      status: 'pending',
+      status: 'pending_approval',
       created_at: order.created_at,
       items: orderItemDetails,
     });
 
-    res.status(201).json({ orderId, message: 'Order placed successfully' });
+    res.status(201).json({ orderId, message: 'Order placed — waiting for admin confirmation' });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -115,7 +117,108 @@ router.patch('/sessions/:sessionId/close', (req, res) => {
   const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(sessionId);
   if (!session) return res.status(404).json({ error: 'Session not found' });
   db.prepare("UPDATE sessions SET status = 'closed' WHERE id = ?").run(sessionId);
+
+  const io = req.app.get('io');
+  io.emit('session_closed', { sessionId: Number(sessionId) });
+
   res.json({ success: true, message: 'Session closed' });
+});
+
+// Approve an order (admin → sends to kitchen)
+router.patch('/:orderId/approve', auth, (req, res) => {
+  const { orderId } = req.params;
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: 'Order not found' });
+  if (order.status !== 'pending_approval') {
+    return res.status(400).json({ error: 'Order is not awaiting approval' });
+  }
+
+  db.prepare("UPDATE orders SET status = 'pending' WHERE id = ?").run(orderId);
+
+  const table = db.prepare('SELECT * FROM tables WHERE id = ?').get(order.table_id);
+  const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(order.session_id);
+  const items = db.prepare(`
+    SELECT oi.*, mi.name, mi.category
+    FROM order_items oi JOIN menu_items mi ON oi.menu_item_id = mi.id
+    WHERE oi.order_id = ?
+  `).all(orderId);
+
+  const io = req.app.get('io');
+  // Tell kitchen about the new approved order
+  io.emit('new_order', {
+    orderId: Number(orderId),
+    tableNumber: table.table_number,
+    tableLabel: table.label,
+    groupId: session?.group_id,
+    sessionId: order.session_id,
+    status: 'pending',
+    created_at: order.created_at,
+    items: items.map(i => ({ name: i.name, quantity: i.quantity, price: i.price_at_order })),
+  });
+  // Also notify customer
+  io.emit('order_updated', { orderId: Number(orderId), status: 'pending' });
+
+  res.json({ success: true, status: 'pending' });
+});
+
+// Reject an order (admin deletes it, notifies customer)
+router.patch('/:orderId/reject', auth, (req, res) => {
+  const { orderId } = req.params;
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: 'Order not found' });
+
+  db.prepare('DELETE FROM order_items WHERE order_id = ?').run(orderId);
+  db.prepare('DELETE FROM orders WHERE id = ?').run(orderId);
+
+  const io = req.app.get('io');
+  io.emit('order_updated', { orderId: Number(orderId), status: 'rejected' });
+
+  res.json({ success: true });
+});
+
+// Get all active sessions with full bill details (for admin)
+router.get('/bills', auth, (req, res) => {
+  const sessions = db.prepare(`
+    SELECT s.*, t.table_number, t.label as table_label
+    FROM sessions s
+    JOIN tables t ON s.table_id = t.id
+    WHERE s.status = 'active'
+    ORDER BY s.created_at ASC
+  `).all();
+
+  const result = sessions.map((session) => {
+    const orders = db.prepare(`
+      SELECT * FROM orders WHERE session_id = ? ORDER BY created_at ASC
+    `).all(session.id);
+
+    const ordersWithItems = orders.map((order) => {
+      const items = db.prepare(`
+        SELECT oi.*, mi.name, mi.category
+        FROM order_items oi JOIN menu_items mi ON oi.menu_item_id = mi.id
+        WHERE oi.order_id = ?
+      `).all(order.id);
+      return { ...order, items };
+    });
+
+    const subtotal = ordersWithItems.reduce((sum, o) =>
+      sum + o.items.reduce((s, i) => s + i.price_at_order * i.quantity, 0), 0
+    );
+
+    return {
+      sessionId: session.id,
+      tableNumber: session.table_number,
+      tableLabel: session.table_label,
+      groupId: session.group_id,
+      createdAt: session.created_at,
+      orders: ordersWithItems,
+      subtotal: Math.round(subtotal * 100) / 100,
+      grandTotal: Math.round(subtotal * 1.05 * 100) / 100,
+      orderCount: ordersWithItems.filter(o => o.status !== 'pending_approval').length,
+      pendingApproval: ordersWithItems.filter(o => o.status === 'pending_approval').length,
+    };
+  });
+
+  res.json(result);
 });
 
 // Cancel a single order item (only if order is still pending)
@@ -124,7 +227,7 @@ router.delete('/:orderId/items/:itemId', (req, res) => {
 
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
   if (!order) return res.status(404).json({ error: 'Order not found' });
-  if (order.status !== 'pending') {
+  if (!['pending', 'pending_approval'].includes(order.status)) {
     return res.status(400).json({ error: 'Cannot remove item — kitchen has already started this order.' });
   }
 
@@ -145,13 +248,13 @@ router.delete('/:orderId/items/:itemId', (req, res) => {
   res.json({ success: true, ...result });
 });
 
-// Cancel entire order (only if pending)
+// Cancel entire order (only if pending or pending_approval)
 router.delete('/:orderId', (req, res) => {
   const { orderId } = req.params;
 
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
   if (!order) return res.status(404).json({ error: 'Order not found' });
-  if (order.status !== 'pending') {
+  if (!['pending', 'pending_approval'].includes(order.status)) {
     return res.status(400).json({ error: 'Cannot cancel — kitchen has already started this order.' });
   }
 
@@ -195,13 +298,13 @@ router.patch('/:orderId/status', auth, (req, res) => {
   res.json({ success: true, status });
 });
 
-// Get all live orders for kitchen
+// Get all live orders for kitchen (excludes pending_approval — admin must approve first)
 router.get('/live', (req, res) => {
   const orders = db.prepare(`
     SELECT o.*, t.table_number, t.label as table_label
     FROM orders o
     JOIN tables t ON o.table_id = t.id
-    WHERE o.status != 'served'
+    WHERE o.status NOT IN ('served', 'pending_approval')
     ORDER BY o.created_at ASC
   `).all();
 

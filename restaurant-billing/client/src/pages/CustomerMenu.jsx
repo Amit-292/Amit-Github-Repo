@@ -12,6 +12,7 @@ const CATEGORY_ICONS = {
 };
 
 const STATUS_META = {
+  pending_approval: { label: 'Waiting for Confirmation', icon: '🔔', color: '#8e44ad', bg: '#f5eef8' },
   pending:   { label: 'Order Received',   icon: '🕐', color: '#f39c12', bg: '#fff8e1' },
   preparing: { label: 'Being Prepared',   icon: '👨‍🍳', color: '#e67e22', bg: '#fff3e0' },
   ready:     { label: 'Ready to Serve!',  icon: '🎉', color: '#27ae60', bg: '#e8f5e9' },
@@ -80,8 +81,9 @@ export default function CustomerMenu() {
     socketRef.current = socket;
 
     socket.on('order_updated', (data) => {
-      if (data.status === 'cancelled') {
+      if (data.status === 'cancelled' || data.status === 'rejected') {
         setMyOrders((prev) => prev.filter((o) => o.id !== data.orderId));
+        if (data.status === 'rejected') showToast('❌ Your order was declined. Please re-order or ask staff.');
       } else if (data.status === 'session_closed') {
         setSession((prev) => prev ? { ...prev, status: 'closed' } : prev);
       } else {
@@ -255,20 +257,20 @@ export default function CustomerMenu() {
 
                     {/* Progress bar */}
                     <div className="order-progress">
-                      {['pending', 'preparing', 'ready', 'served'].map((s, i) => {
-                        const statuses = ['pending', 'preparing', 'ready', 'served'];
+                      {['pending_approval', 'pending', 'preparing', 'ready', 'served'].map((s, i) => {
+                        const statuses = ['pending_approval', 'pending', 'preparing', 'ready', 'served'];
                         const currentIdx = statuses.indexOf(order.status);
                         const done = i <= currentIdx;
                         return (
                           <React.Fragment key={s}>
                             <div className={`progress-dot ${done ? 'done' : ''}`} style={done ? { background: meta.color } : {}} />
-                            {i < 3 && <div className={`progress-line ${done && i < currentIdx ? 'done' : ''}`} style={done && i < currentIdx ? { background: meta.color } : {}} />}
+                            {i < 4 && <div className={`progress-line ${done && i < currentIdx ? 'done' : ''}`} style={done && i < currentIdx ? { background: meta.color } : {}} />}
                           </React.Fragment>
                         );
                       })}
                     </div>
                     <div className="order-progress-labels">
-                      <span>Received</span><span>Preparing</span><span>Ready</span><span>Served</span>
+                      <span>Confirm</span><span>Received</span><span>Preparing</span><span>Ready</span><span>Served</span>
                     </div>
 
                     <div className="order-items-list">
