@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CustomerMenu from './pages/CustomerMenu';
 import BillPage from './pages/BillPage';
+import BillShare from './pages/BillShare';
 import KitchenDisplay from './pages/KitchenDisplay';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/table/:tableId/:groupId" element={<CustomerMenu />} />
         <Route path="/table/:tableId/bill" element={<BillPage />} />
         <Route path="/table/:tableId/:groupId/bill" element={<BillPage />} />
+        <Route path="/bill/:sessionId" element={<BillShare />} />
         <Route path="/kitchen" element={<KitchenDisplay />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route

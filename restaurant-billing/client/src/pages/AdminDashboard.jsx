@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import api from '../api';
 import * as XLSX from 'xlsx';
 import html2pdf from 'html2pdf.js';
+import { BRAND_COLORS } from '../constants';
 
 const CATEGORIES = ['Starters', 'Main Course', 'Beverages', 'Desserts'];
 const EMPTY_ITEM = { name: '', description: '', price: '', category: 'Main Course', image_url: '', available: true };
@@ -42,6 +43,10 @@ export default function AdminDashboard() {
   const [billsHistory, setBillsHistory] = useState([]);
   const [billsHistoryDate, setBillsHistoryDate] = useState('');
   const [expandedHistoryBill, setExpandedHistoryBill] = useState(null);
+
+  // Best Sellers
+  const [bestSellers, setBestSellers] = useState([]);
+  const [billCloseLoading, setBillCloseLoading] = useState({});
 
   const toggleFeedbackSelect = (id) => {
     setSelectedFeedbacks(prev => {
@@ -132,6 +137,68 @@ export default function AdminDashboard() {
       await api.delete(`/orders/bills-history/${sessionId}`);
       loadBillsHistory(billsHistoryDate);
     } catch (err) { alert(err.response?.data?.error || 'Failed to delete bill'); }
+  };
+
+  const loadBestSellers = useCallback(async () => {
+    try {
+      const res = await api.get('/orders/best-sellers');
+      setBestSellers(res.data);
+    } catch (err) { console.error(err); }
+  }, []);
+
+  const closeBill = async (sessionId) => {
+    if (!confirm('Close this bill and move to history?')) return;
+    setBillCloseLoading(prev => ({ ...prev, [sessionId]: true }));
+    try {
+      await api.patch(`/orders/bills/${sessionId}/close`);
+      loadBills();
+      loadBillsHistory();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to close bill');
+    } finally {
+      setBillCloseLoading(prev => ({ ...prev, [sessionId]: false }));
+    }
+  };
+
+  const sendBillPDF = async (bill) => {
+    // Generate PDF and trigger download
+    const billHTML = buildBillHTML(bill);
+    const options = {
+      margin: 10,
+      filename: `bill-${bill.sessionId}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+    html2pdf().set(options).from(billHTML).save();
+  };
+
+  const buildBillHTML = (bill) => {
+    return `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Bill Receipt</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+            .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #6B4423; padding-bottom: 20px; }
+            .header h1 { color: #6B4423; margin: 0; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background-color: #6B4423; color: white; }
+            .summary { background: #F5E6D3; padding: 20px; border-radius: 6px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header"><h1>A5 Confectioners - Bill Receipt</h1></div>
+            <p><strong>Table:</strong> ${bill.tableNumber}</p>
+            <p><strong>Total:</strong> ₹${bill.grandTotal.toFixed(2)}</p>
+          </div>
+        </body>
+      </html>
+    `;
   };
 
   const exportFeedbacksToExcel = () => {
@@ -440,6 +507,9 @@ export default function AdminDashboard() {
         <button className={`admin-tab ${activeTab === 'bills-history' ? 'active' : ''}`} onClick={() => { setActiveTab('bills-history'); loadBillsHistory(); }}>
           📊 Bills History
         </button>
+        <button className={`admin-tab ${activeTab === 'best-sellers' ? 'active' : ''}`} onClick={() => { setActiveTab('best-sellers'); loadBestSellers(); }}>
+          🏆 Best Sellers
+        </button>
         <button className={`admin-tab ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>
           🍛 Menu
         </button>
@@ -598,6 +668,23 @@ export default function AdminDashboard() {
                               onClick={(e) => { e.stopPropagation(); sendBillWhatsApp(bill); }}
                             >
                               Send →
+                            </button>
+                          </div>
+
+                          <div style={{ marginTop: 12, display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={(e) => { e.stopPropagation(); sendBillPDF(bill); }}
+                            >
+                              📥 Download Bill PDF
+                            </button>
+                            <button
+                              className="btn btn-sm"
+                              style={{ background: BRAND_COLORS.primary, color: 'white', border: 'none' }}
+                              onClick={(e) => { e.stopPropagation(); closeBill(bill.sessionId); }}
+                              disabled={billCloseLoading[bill.sessionId]}
+                            >
+                              {billCloseLoading[bill.sessionId] ? '⏳ Closing...' : '✅ Close & Move to History'}
                             </button>
                           </div>
                         </div>
@@ -1027,6 +1114,67 @@ export default function AdminDashboard() {
                     </div>
                   );
                 })}
+              </>
+            )}
+          </>
+        )}
+
+        {activeTab === 'best-sellers' && (
+          <>
+            <div className="flex-between mb-16">
+              <h2>🏆 Best Sellers</h2>
+              <button className="btn btn-sm btn-outline" onClick={loadBestSellers}>↻ Refresh</button>
+            </div>
+
+            {bestSellers.length === 0 ? (
+              <div className="card text-center" style={{ padding: '40px 20px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🏆</div>
+                <p className="text-muted">No sales data yet. Bills will appear here once they're closed.</p>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 20 }}>
+                  {[
+                    { label: 'Top Item', value: bestSellers[0]?.name, icon: '🥇' },
+                    { label: 'Total Items Sold', value: bestSellers.reduce((sum, b) => sum + b.total_quantity, 0), icon: '📦' },
+                    { label: 'Top 3 Revenue', value: '₹' + bestSellers.slice(0, 3).reduce((sum, b) => sum + b.total_revenue, 0).toFixed(2), icon: '💰' },
+                  ].map(stat => (
+                    <div key={stat.label} className="card text-center" style={{ padding: '12px 8px' }}>
+                      <div style={{ fontSize: '1.4rem' }}>{stat.icon}</div>
+                      <div style={{ fontWeight: 700, fontSize: '1.1rem', margin: '4px 0', wordBreak: 'break-word' }}>{stat.value}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#888' }}>{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '40px' }}>Rank</th>
+                        <th>Item Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Times Ordered</th>
+                        <th>Total Quantity</th>
+                        <th>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bestSellers.map((item, idx) => (
+                        <tr key={item.id}>
+                          <td style={{ textAlign: 'center', fontWeight: 700, color: BRAND_COLORS.primary }}>#{idx + 1}</td>
+                          <td style={{ fontWeight: 600 }}>{item.name}</td>
+                          <td style={{ color: '#888' }}>{item.category}</td>
+                          <td>₹{item.price.toFixed(2)}</td>
+                          <td style={{ textAlign: 'center' }}>{item.times_ordered}</td>
+                          <td style={{ textAlign: 'center', fontWeight: 600 }}>{item.total_quantity}</td>
+                          <td style={{ fontWeight: 700, color: BRAND_COLORS.primary }}>₹{item.total_revenue.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
           </>

@@ -403,3 +403,89 @@ router.get('/live', (req, res) => {
 });
 
 module.exports = router;
+
+// Get best seller items from closed bills
+router.get('/best-sellers', auth, (req, res) => {
+  try {
+    const items = db.prepare(`
+      SELECT 
+        mi.id,
+        mi.name,
+        mi.category,
+        mi.price,
+        COUNT(oi.id) as times_ordered,
+        SUM(oi.quantity) as total_quantity,
+        SUM(oi.quantity * oi.price_at_order) as total_revenue
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      JOIN orders o ON oi.order_id = o.id
+      JOIN sessions s ON o.session_id = s.id
+      WHERE s.status = 'closed'
+      GROUP BY mi.id
+      ORDER BY total_quantity DESC
+      LIMIT 20
+    `).all();
+    
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch best sellers' });
+  }
+});
+
+// Generate shareable bill link (public endpoint)
+router.get('/bill-share/:sessionId', (req, res) => {
+  const { sessionId } = req.params;
+  const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(sessionId);
+  
+  if (!session) {
+    return res.status(404).json({ error: 'Bill not found' });
+  }
+
+  const orders = db.prepare('SELECT * FROM orders WHERE session_id = ? ORDER BY created_at ASC').all(sessionId);
+  const ordersWithItems = orders.map(order => {
+    const items = db.prepare(`
+      SELECT oi.*, mi.name, mi.category
+      FROM order_items oi
+      JOIN menu_items mi ON oi.menu_item_id = mi.id
+      WHERE oi.order_id = ?
+    `).all(order.id);
+    return { ...order, items };
+  });
+
+  const subtotal = ordersWithItems.reduce((sum, o) =>
+    sum + o.items.reduce((s, i) => s + i.price_at_order * i.quantity, 0), 0
+  );
+
+  const bill = {
+    sessionId: session.id,
+    tableNumber: session.table_number || 'N/A',
+    groupId: session.group_id,
+    createdAt: session.created_at,
+    orders: ordersWithItems,
+    subtotal: Math.round(subtotal * 100) / 100,
+    grandTotal: Math.round(subtotal * 1.05 * 100) / 100,
+  };
+
+  res.json(bill);
+});
+
+// Close a bill and move to history
+router.patch('/bills/:sessionId/close', auth, (req, res) => {
+  const { sessionId } = req.params;
+  const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(sessionId);
+
+  if (!session) {
+    return res.status(404).json({ error: 'Session not found' });
+  }
+
+  try {
+    db.prepare("UPDATE sessions SET status = 'closed' WHERE id = ?").run(sessionId);
+    
+    const io = req.app.get('io');
+    io.emit('bill_closed', { sessionId: Number(sessionId) });
+
+    res.json({ success: true, message: 'Bill closed and moved to history' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to close bill' });
+  }
+});
