@@ -647,6 +647,87 @@ Private - A5 Confectioners
 
 ---
 
+## 🔧 Troubleshooting
+
+### Getting 404 Error on URLs?
+
+**Problem**: URLs return 404 error
+- https://a5confectioners-restaurant.up.railway.app/admin/login
+- https://a5confectioners-restaurant.up.railway.app/kitchen
+
+**Root Cause**: App is not yet deployed on Railway (configuration is ready, but deployment not started)
+
+**Solution**: Deploy to Railway using one of these methods:
+
+#### ✅ **Option 1: Railway Dashboard (Easiest - 5 min)**
+1. Go to https://railway.app
+2. Click "New Project" → "Deploy from GitHub"
+3. Select repo: `Amit-292/Amit-Github-Repo`
+4. Wait for deployment (2-5 min) - check for green "Running" status
+5. Add Environment Variables:
+   - `NODE_ENV = production` (IMPORTANT!)
+   - `PORT = 3001`
+   - `JWT_SECRET = your-secure-32-char-string`
+   - `UPI_ID = your-upi@upi`
+   - `RESTAURANT_NAME = A5 Confectioners`
+
+6. Test URLs after deployment completes
+
+#### ✅ **Option 2: Push to GitHub (Auto-deploy)**
+```bash
+cd /workspaces/desktop-tutorial/restaurant-billing
+git add .
+git commit -m "Ready for deployment"
+git push origin main
+# Then follow Option 1 to connect Railway
+```
+
+#### ✅ **Option 3: Railway CLI**
+```bash
+npm install -g @railway/cli
+railway login
+cd /workspaces/desktop-tutorial/restaurant-billing
+railway init
+railway up
+railway variables add NODE_ENV production
+railway variables add PORT 3001
+railway variables add JWT_SECRET your-secret
+```
+
+### Verification Checklist After Deployment
+- [ ] Railway dashboard shows "Running" status (green)
+- [ ] All environment variables are set (especially NODE_ENV=production)
+- [ ] Can access admin login page without 404
+- [ ] Kitchen display loads
+- [ ] Customer menu works (table/1)
+
+### Common Issues & Solutions
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| **404 Not Found** | App not deployed | Deploy to Railway (see above) |
+| **Cannot find module** | Dependencies missing | Railway should auto-install; check logs |
+| **Port already in use** | PORT conflict on Railway | Change PORT to 3002 or 3003 |
+| **Cannot read config** | NODE_ENV not production | Add `NODE_ENV=production` variable |
+| **Build failed** | Build error | Check Railway deployment logs |
+
+### Check Railway Logs
+```
+1. Go to railway.app
+2. Click your project
+3. Click "Deployments"
+4. Click latest deployment
+5. View logs → look for errors
+```
+
+### Still Having Issues?
+1. Verify all environment variables are set in Railway dashboard
+2. Check deployment logs for specific error messages
+3. Try redeploying: Click "Redeploy" button in Railway dashboard
+4. Ensure `NODE_ENV=production` is set (this is critical!)
+
+---
+
 ## 👥 Team
 
 **Developed by**: Development Team  
