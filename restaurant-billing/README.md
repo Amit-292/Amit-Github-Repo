@@ -4,7 +4,7 @@ A modern, production-ready restaurant billing and order management system with Q
 
 **Status**: ✅ **LIVE IN PRODUCTION** | **Version**: 2.1.0
 
-🚀 **LIVE DEMO**: https://a5confectioners-restaurant.up.railway.app
+🚀 **LIVE DEMO**: https://restaurant-billing-production-a629.up.railway.app
 
 ---
 
@@ -12,10 +12,10 @@ A modern, production-ready restaurant billing and order management system with Q
 
 | Interface | Full URL |
 |-----------|----------|
-| **👨‍💼 Admin Dashboard** | https://a5confectioners-restaurant.up.railway.app/admin/login |
-| **🍳 Kitchen Display** | https://a5confectioners-restaurant.up.railway.app/kitchen |
-| **🛒 Customer Menu (Table 1)** | https://a5confectioners-restaurant.up.railway.app/table/1 |
-| **💰 Sample Bill** | https://a5confectioners-restaurant.up.railway.app/bill/BILL_ID |
+| **👨‍💼 Admin Dashboard** | https://restaurant-billing-production-a629.up.railway.app/admin/login |
+| **🍳 Kitchen Display** | https://restaurant-billing-production-a629.up.railway.app/kitchen |
+| **🛒 Customer Menu (Table 1)** | https://restaurant-billing-production-a629.up.railway.app/table/1 |
+| **💰 Sample Bill** | https://restaurant-billing-production-a629.up.railway.app/bill/BILL_ID |
 
 ---
 
@@ -25,7 +25,7 @@ A modern, production-ready restaurant billing and order management system with Q
 
 #### 👨‍💼 **Admin Dashboard** (Staff Only)
 ```
-https://a5confectioners-restaurant.up.railway.app/admin/login
+https://restaurant-billing-production-a629.up.railway.app/admin/login
 ```
 - **Username**: admin
 - **Password**: admin123 (⚠️ Change this immediately in production!)
@@ -34,7 +34,7 @@ https://a5confectioners-restaurant.up.railway.app/admin/login
 
 #### 🍳 **Kitchen Display System**
 ```
-https://a5confectioners-restaurant.up.railway.app/kitchen
+https://restaurant-billing-production-a629.up.railway.app/kitchen
 ```
 - **Access**: Kitchen staff only
 - **View**: Real-time order updates
@@ -44,9 +44,9 @@ https://a5confectioners-restaurant.up.railway.app/kitchen
 
 #### 📱 **Customer Menu** (Scan Table QR Code)
 ```
-https://a5confectioners-restaurant.up.railway.app/table/1
-https://a5confectioners-restaurant.up.railway.app/table/2
-https://a5confectioners-restaurant.up.railway.app/table/3
+https://restaurant-billing-production-a629.up.railway.app/table/1
+https://restaurant-billing-production-a629.up.railway.app/table/2
+https://restaurant-billing-production-a629.up.railway.app/table/3
 ... (replace '1', '2', '3' with your table numbers)
 ```
 - **Access**: No login required
@@ -67,7 +67,7 @@ Restaurant: A5 Confectioners
 
 #### 📄 **Bill Sharing** (Public Access)
 ```
-https://a5confectioners-restaurant.up.railway.app/bill/SESSION_ID
+https://restaurant-billing-production-a629.up.railway.app/bill/SESSION_ID
 ```
 - **Access**: No login required
 - **View**: Bill details, download PDF, share via WhatsApp/SMS
@@ -724,8 +724,8 @@ Private - A5 Confectioners
 ### Getting 404 Error on URLs?
 
 **Problem**: URLs return 404 error
-- https://a5confectioners-restaurant.up.railway.app/admin/login
-- https://a5confectioners-restaurant.up.railway.app/kitchen
+- https://restaurant-billing-production-a629.up.railway.app/admin/login
+- https://restaurant-billing-production-a629.up.railway.app/kitchen
 
 **Root Cause**: App is not yet deployed on Railway (configuration is ready, but deployment not started)
 
@@ -820,4 +820,4 @@ For issues, feature requests, or support:
 
 **Last Updated**: September 4, 2026 | **Version**: 2.0.0 | **Status**: 🟢 LIVE IN PRODUCTION
 
-🚀 **Live at**: https://a5confectioners-restaurant.up.railway.app
+🚀 **Live at**: https://restaurant-billing-production-a629.up.railway.app
