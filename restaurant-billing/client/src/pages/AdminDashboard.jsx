@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import api from '../api';
+import * as XLSX from 'xlsx';
+import html2pdf from 'html2pdf.js';
 
 const CATEGORIES = ['Starters', 'Main Course', 'Beverages', 'Desserts'];
 const EMPTY_ITEM = { name: '', description: '', price: '', category: 'Main Course', image_url: '', available: true };
@@ -33,7 +35,13 @@ export default function AdminDashboard() {
   // Feedback
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackSearch, setFeedbackSearch] = useState('');
+  const [feedbackDateFilter, setFeedbackDateFilter] = useState('');
   const [selectedFeedbacks, setSelectedFeedbacks] = useState(new Set());
+
+  // Bills History
+  const [billsHistory, setBillsHistory] = useState([]);
+  const [billsHistoryDate, setBillsHistoryDate] = useState('');
+  const [expandedHistoryBill, setExpandedHistoryBill] = useState(null);
 
   const toggleFeedbackSelect = (id) => {
     setSelectedFeedbacks(prev => {
@@ -109,6 +117,119 @@ export default function AdminDashboard() {
       setFeedbacks(res.data);
     } catch (err) { console.error(err); }
   }, []);
+
+  const loadBillsHistory = useCallback(async (date = '') => {
+    try {
+      const params = date ? { date } : {};
+      const res = await api.get('/orders/bills-history', { params });
+      setBillsHistory(res.data);
+    } catch (err) { console.error(err); }
+  }, []);
+
+  const deleteBillHistory = async (sessionId) => {
+    if (!confirm('Delete this bill from history? This cannot be undone.')) return;
+    try {
+      await api.delete(`/orders/bills-history/${sessionId}`);
+      loadBillsHistory(billsHistoryDate);
+    } catch (err) { alert(err.response?.data?.error || 'Failed to delete bill'); }
+  };
+
+  const exportFeedbacksToExcel = () => {
+    const filteredFeedbacks = feedbackDateFilter
+      ? feedbacks.filter(f => new Date(f.created_at + 'Z').toLocaleDateString('en-CA') === feedbackDateFilter)
+      : feedbacks;
+
+    if (filteredFeedbacks.length === 0) {
+      alert('No feedbacks to export');
+      return;
+    }
+
+    const data = filteredFeedbacks.map(f => ({
+      'Date': new Date(f.created_at + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      'Time': new Date(f.created_at + 'Z').toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+      'Table': `T${f.table_number}${f.group_id && f.group_id !== '1' ? `/G${f.group_id}` : ''}`,
+      'Food Rating': f.food_rating ? '★'.repeat(f.food_rating) : '—',
+      'Staff Rating': f.staff_rating ? '★'.repeat(f.staff_rating) : '—',
+      'Improvements': f.improvements || '',
+      'Contact': f.contact || '',
+      'Email': f.email || '',
+      'DOB': f.dob || '',
+      'Anniversary': f.anniversary || '',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Feedbacks');
+    XLSX.writeFile(wb, `feedbacks-${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const exportFeedbacksToPDF = () => {
+    const filteredFeedbacks = feedbackDateFilter
+      ? feedbacks.filter(f => new Date(f.created_at + 'Z').toLocaleDateString('en-CA') === feedbackDateFilter)
+      : feedbacks;
+
+    if (filteredFeedbacks.length === 0) {
+      alert('No feedbacks to export');
+      return;
+    }
+
+    const html = `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Customer Feedbacks Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+            th { background-color: #f39c12; color: white; font-weight: bold; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+          </style>
+        </head>
+        <body>
+          <h1>Customer Feedback Report</h1>
+          <p>Generated on ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Table</th>
+                <th>Food</th>
+                <th>Staff</th>
+                <th>Improvements</th>
+                <th>Contact</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredFeedbacks.map(f => `
+                <tr>
+                  <td>${new Date(f.created_at + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                  <td>T${f.table_number}${f.group_id && f.group_id !== '1' ? `/G${f.group_id}` : ''}</td>
+                  <td>${f.food_rating ? '★'.repeat(f.food_rating) : '—'}</td>
+                  <td>${f.staff_rating ? '★'.repeat(f.staff_rating) : '—'}</td>
+                  <td>${f.improvements || ''}</td>
+                  <td>${f.contact || ''}</td>
+                  <td>${f.email || ''}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    const options = {
+      margin: 10,
+      filename: `feedbacks-${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+    };
+
+    html2pdf().set(options).from(html).save();
+  };
 
   const getGroupCount = (tableId) => tableGroupCounts[tableId] || 1;
   const changeGroupCount = (tableId, delta) => {
@@ -315,6 +436,9 @@ export default function AdminDashboard() {
               {bills.filter(b => b.orderCount > 0).length}
             </span>
           )}
+        </button>
+        <button className={`admin-tab ${activeTab === 'bills-history' ? 'active' : ''}`} onClick={() => { setActiveTab('bills-history'); loadBillsHistory(); }}>
+          📊 Bills History
         </button>
         <button className={`admin-tab ${activeTab === 'menu' ? 'active' : ''}`} onClick={() => setActiveTab('menu')}>
           🍛 Menu
@@ -676,12 +800,26 @@ export default function AdminDashboard() {
               <h2>💬 Customer Feedback ({feedbacks.length})</h2>
               <div className="flex gap-8">
                 <input
+                  type="date"
+                  className="form-control"
+                  style={{ width: 150 }}
+                  value={feedbackDateFilter}
+                  onChange={(e) => setFeedbackDateFilter(e.target.value)}
+                  title="Filter by date"
+                />
+                <input
                   className="form-control"
                   style={{ width: 200 }}
                   placeholder="Search phone / email..."
                   value={feedbackSearch}
                   onChange={(e) => setFeedbackSearch(e.target.value)}
                 />
+                <button className="btn btn-sm btn-success" onClick={exportFeedbacksToExcel} title="Export to Excel">
+                  📊 Excel
+                </button>
+                <button className="btn btn-sm btn-outline" onClick={exportFeedbacksToPDF} title="Export to PDF">
+                  📄 PDF
+                </button>
                 <button className="btn btn-sm btn-outline" onClick={loadFeedbacks}>↻ Refresh</button>
               </div>
             </div>
@@ -731,6 +869,7 @@ export default function AdminDashboard() {
                           {(() => {
                             const visibleIds = feedbacks
                               .filter(f => {
+                                if (feedbackDateFilter && new Date(f.created_at + 'Z').toLocaleDateString('en-CA') !== feedbackDateFilter) return false;
                                 if (!feedbackSearch) return true;
                                 const q = feedbackSearch.toLowerCase();
                                 return (f.contact||'').includes(q)||(f.email||'').toLowerCase().includes(q);
@@ -754,6 +893,7 @@ export default function AdminDashboard() {
                     <tbody>
                       {feedbacks
                         .filter(f => {
+                          if (feedbackDateFilter && new Date(f.created_at + 'Z').toLocaleDateString('en-CA') !== feedbackDateFilter) return false;
                           if (!feedbackSearch) return true;
                           const q = feedbackSearch.toLowerCase();
                           return (f.contact||'').includes(q)||(f.email||'').toLowerCase().includes(q);
@@ -781,6 +921,112 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+              </>
+            )}
+          </>
+        )}
+
+        {activeTab === 'bills-history' && (
+          <>
+            <div className="flex-between mb-16">
+              <h2>📊 Bills History</h2>
+              <div className="flex gap-8">
+                <input
+                  type="date"
+                  className="form-control"
+                  style={{ width: 150 }}
+                  value={billsHistoryDate}
+                  onChange={(e) => {
+                    setBillsHistoryDate(e.target.value);
+                    loadBillsHistory(e.target.value);
+                  }}
+                  title="Filter by date"
+                />
+                <button className="btn btn-sm btn-outline" onClick={() => loadBillsHistory(billsHistoryDate)}>↻ Refresh</button>
+              </div>
+            </div>
+
+            {billsHistory.length === 0 ? (
+              <div className="card text-center" style={{ padding: '40px 20px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>📊</div>
+                <p className="text-muted">No bill history found{billsHistoryDate ? ' for this date' : ''}.</p>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 20 }}>
+                  {[
+                    { label: 'Total Bills', value: billsHistory.length, icon: '🧾' },
+                    { label: 'Grand Total', value: '₹' + billsHistory.reduce((sum, b) => sum + b.grandTotal, 0).toFixed(2), icon: '💰' },
+                    { label: 'Total (w/o GST)', value: '₹' + billsHistory.reduce((sum, b) => sum + b.subtotal, 0).toFixed(2), icon: '📋' },
+                  ].map(stat => (
+                    <div key={stat.label} className="card text-center" style={{ padding: '12px 8px' }}>
+                      <div style={{ fontSize: '1.4rem' }}>{stat.icon}</div>
+                      <div style={{ fontWeight: 700, fontSize: '1.1rem', margin: '4px 0', wordBreak: 'break-word' }}>{stat.value}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#888' }}>{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {billsHistory.map(bill => {
+                  const isExpanded = expandedHistoryBill === bill.sessionId;
+                  return (
+                    <div key={bill.sessionId} className="card mb-16">
+                      <div
+                        className="flex-between"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setExpandedHistoryBill(isExpanded ? null : bill.sessionId)}
+                      >
+                        <div>
+                          <strong style={{ fontSize: '1.05rem' }}>
+                            Table {bill.tableNumber}
+                            {bill.groupId && bill.groupId !== '1' ? ` · Group ${bill.groupId}` : ''}
+                          </strong>
+                          {bill.tableLabel && <span style={{ marginLeft: 8, color: '#888', fontSize: '0.85rem' }}>{bill.tableLabel}</span>}
+                          <div style={{ marginTop: 4, fontSize: '0.82rem', color: '#888' }}>
+                            📅 {new Date(bill.createdAt + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#27ae60' }}>₹{bill.grandTotal.toFixed(2)}</div>
+                          <div style={{ fontSize: '0.78rem', color: '#aaa' }}>incl. 5% GST</div>
+                          <div style={{ fontSize: '0.85rem', marginTop: 4 }}>{isExpanded ? '▲ Hide' : '▼ View Details'}</div>
+                        </div>
+                      </div>
+
+                      {isExpanded && (
+                        <div style={{ marginTop: 16, borderTop: '1px solid #eee', paddingTop: 16 }}>
+                          {bill.orders.map((order, idx) => (
+                            <div key={order.id} style={{ marginBottom: 12 }}>
+                              <div style={{ fontWeight: 600, fontSize: '0.88rem', marginBottom: 6, color: '#666' }}>
+                                Order #{idx + 1} — <span style={{ color: '#27ae60' }}>{order.status}</span>
+                              </div>
+                              {order.items.map((item) => (
+                                <div key={item.id} className="bill-row" style={{ fontSize: '0.88rem' }}>
+                                  <span>{item.name} × {item.quantity}</span>
+                                  <span>₹{(item.price_at_order * item.quantity).toFixed(2)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                          <hr className="bill-divider" />
+                          <div className="bill-row"><span>Subtotal</span><span>₹{bill.subtotal.toFixed(2)}</span></div>
+                          <div className="bill-row"><span>GST (5%)</span><span>₹{(bill.grandTotal - bill.subtotal).toFixed(2)}</span></div>
+                          <div className="bill-row" style={{ fontWeight: 700, fontSize: '1rem' }}><span>Grand Total</span><span>₹{bill.grandTotal.toFixed(2)}</span></div>
+
+                          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed #eee' }}>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => deleteBillHistory(bill.sessionId)}
+                              style={{ marginRight: 8 }}
+                            >
+                              🗑 Delete Bill
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </>
             )}
           </>

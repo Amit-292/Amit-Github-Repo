@@ -221,6 +221,87 @@ router.get('/bills', auth, (req, res) => {
   res.json(result);
 });
 
+// Get all bills history (closed sessions) with optional date filtering
+router.get('/bills-history', auth, (req, res) => {
+  const { date } = req.query;
+  let query = `
+    SELECT s.*, t.table_number, t.label as table_label
+    FROM sessions s
+    JOIN tables t ON s.table_id = t.id
+    WHERE s.status = 'closed'
+  `;
+  const params = [];
+
+  if (date) {
+    query += ` AND DATE(s.created_at) = ?`;
+    params.push(date);
+  }
+
+  query += ` ORDER BY s.created_at DESC`;
+
+  const sessions = db.prepare(query).all(...params);
+
+  const result = sessions.map((session) => {
+    const orders = db.prepare(`
+      SELECT * FROM orders WHERE session_id = ? ORDER BY created_at ASC
+    `).all(session.id);
+
+    const ordersWithItems = orders.map((order) => {
+      const items = db.prepare(`
+        SELECT oi.*, mi.name, mi.category
+        FROM order_items oi JOIN menu_items mi ON oi.menu_item_id = mi.id
+        WHERE oi.order_id = ?
+      `).all(order.id);
+      return { ...order, items };
+    });
+
+    const subtotal = ordersWithItems.reduce((sum, o) =>
+      sum + o.items.reduce((s, i) => s + i.price_at_order * i.quantity, 0), 0
+    );
+
+    return {
+      sessionId: session.id,
+      tableNumber: session.table_number,
+      tableLabel: session.table_label,
+      groupId: session.group_id,
+      createdAt: session.created_at,
+      orders: ordersWithItems,
+      subtotal: Math.round(subtotal * 100) / 100,
+      grandTotal: Math.round(subtotal * 1.05 * 100) / 100,
+      orderCount: ordersWithItems.filter(o => o.status !== 'pending_approval').length,
+    };
+  });
+
+  res.json(result);
+});
+
+// Delete a bill history entry (soft-delete or hard-delete for closed sessions only)
+router.delete('/bills-history/:sessionId', auth, (req, res) => {
+  const { sessionId } = req.params;
+  const session = db.prepare('SELECT * FROM sessions WHERE id = ?').get(sessionId);
+
+  if (!session) {
+    return res.status(404).json({ error: 'Session not found' });
+  }
+
+  if (session.status !== 'closed') {
+    return res.status(400).json({ error: 'Cannot delete active sessions' });
+  }
+
+  const deleteSession = db.transaction(() => {
+    db.prepare('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE session_id = ?)').run(sessionId);
+    db.prepare('DELETE FROM orders WHERE session_id = ?').run(sessionId);
+    db.prepare('DELETE FROM sessions WHERE id = ?').run(sessionId);
+  });
+
+  try {
+    deleteSession();
+    res.json({ success: true, message: 'Bill deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete bill' });
+  }
+});
+
 // Cancel a single order item (only if order is still pending)
 router.delete('/:orderId/items/:itemId', (req, res) => {
   const { orderId, itemId } = req.params;

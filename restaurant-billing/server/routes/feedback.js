@@ -35,6 +35,22 @@ router.get('/', auth, (req, res) => {
   res.json(rows);
 });
 
+// Get feedback with date filtering (admin only)
+router.get('/filtered', auth, (req, res) => {
+  const { date } = req.query;
+  let query = 'SELECT * FROM feedbacks WHERE 1=1';
+  const params = [];
+
+  if (date) {
+    query += ' AND DATE(created_at) = ?';
+    params.push(date);
+  }
+
+  query += ' ORDER BY created_at DESC';
+  const rows = db.prepare(query).all(...params);
+  res.json(rows);
+});
+
 // Delete selected feedbacks (admin only)
 router.delete('/', auth, (req, res) => {
   const { ids } = req.body;
