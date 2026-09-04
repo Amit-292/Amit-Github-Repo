@@ -18,7 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "qrcode": "^1.5.4",
     "railway": "^3.11.0",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "twilio": "^6.1.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

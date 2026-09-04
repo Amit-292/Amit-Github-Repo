@@ -134,6 +134,17 @@ export default function BillShare() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
+  const shareSMS = () => {
+    if (!bill) return;
+    const phoneNumber = prompt('Enter phone number to send bill via SMS:');
+    if (!phoneNumber) return;
+    
+    const smsText = `🍽️ A5 Confectioners Bill\n\nTable: ${bill.tableNumber}\n💰 Total: ₹${bill.grandTotal.toFixed(2)}\n(incl. 5% GST)\n\nThank you! 🙏`;
+    const encodedText = encodeURIComponent(smsText);
+    const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : '+91' + phoneNumber;
+    window.location.href = `sms:${formattedPhone}?body=${encodedText}`;
+  };
+
   if (loading) {
     return (
       <div style={{ 
@@ -287,6 +298,26 @@ export default function BillShare() {
               onMouseOut={(e) => e.target.style.background = '#25D366'}
             >
               💬 Share on WhatsApp
+            </button>
+            <button
+              onClick={shareSMS}
+              style={{
+                flex: 1,
+                minWidth: '120px',
+                padding: '12px 20px',
+                background: '#007AFF',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background 0.3s'
+              }}
+              onMouseOver={(e) => e.target.style.background = '#0051D5'}
+              onMouseOut={(e) => e.target.style.background = '#007AFF'}
+            >
+              💌 Share via SMS
             </button>
           </div>
 

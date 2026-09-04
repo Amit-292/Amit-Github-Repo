@@ -489,3 +489,45 @@ router.patch('/bills/:sessionId/close', auth, (req, res) => {
     res.status(500).json({ error: 'Failed to close bill' });
   }
 });
+
+// Send bill via SMS
+router.post('/bill-share/send-sms', auth, async (req, res) => {
+  const { sessionId, phoneNumber } = req.body;
+  
+  if (!sessionId || !phoneNumber) {
+    return res.status(400).json({ error: 'sessionId and phoneNumber are required' });
+  }
+
+  try {
+    const smsService = require('../services/smsService');
+    const result = await smsService.sendBillShareSMS(phoneNumber, sessionId, 'A5 Confectioners');
+    
+    if (result.success) {
+      res.json({ success: true, message: result.message, data: result });
+    } else {
+      res.status(400).json({ error: result.message });
+    }
+  } catch (err) {
+    console.error('SMS endpoint error:', err);
+    res.status(500).json({ error: 'Failed to send SMS' });
+  }
+});
+
+// Get SMS text for manual sending
+router.get('/bill-share/:sessionId/sms-text', (req, res) => {
+  const { sessionId } = req.params;
+  
+  if (!sessionId) {
+    return res.status(400).json({ error: 'sessionId is required' });
+  }
+
+  try {
+    const smsService = require('../services/smsService');
+    const smsText = smsService.generateBillSMSText(sessionId, 'A5 Confectioners');
+    res.json({ smsText });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to generate SMS text' });
+  }
+});
+
+module.exports = router;

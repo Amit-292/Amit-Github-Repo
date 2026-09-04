@@ -79,6 +79,19 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
       window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     };
 
+    const shareSMS = () => {
+      const phoneNumber = prompt('Enter your phone number to receive bill via SMS:');
+      if (!phoneNumber) return;
+      
+      // In production, this would call an API, but for now we'll show the SMS text
+      const smsText = `🍽️ Hi! Your bill from A5 Confectioners is ready.\n\nView & Download: ${billShareUrl}\n\nShare your bill and download PDF. Thank you for dining with us! 😊`;
+      
+      // Open SMS with pre-filled text (works on mobile)
+      const encodedText = encodeURIComponent(smsText);
+      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : '+91' + phoneNumber;
+      window.location.href = `sms:${formattedPhone}?body=${encodedText}`;
+    };
+
     const downloadBill = () => {
       // Redirect to bill share page
       window.location.href = billShareUrl;
@@ -120,6 +133,21 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
             }}
           >
             💬 Share on WhatsApp
+          </button>
+          <button
+            onClick={shareSMS}
+            style={{
+              padding: '12px 16px',
+              background: '#007AFF',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            💌 Share via SMS
           </button>
         </div>
 

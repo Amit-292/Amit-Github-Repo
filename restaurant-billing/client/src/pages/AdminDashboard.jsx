@@ -47,6 +47,7 @@ export default function AdminDashboard() {
   // Best Sellers
   const [bestSellers, setBestSellers] = useState([]);
   const [billCloseLoading, setBillCloseLoading] = useState({});
+  const [billSMSLoading, setBillSMSLoading] = useState({});
 
   const toggleFeedbackSelect = (id) => {
     setSelectedFeedbacks(prev => {
@@ -171,6 +172,21 @@ export default function AdminDashboard() {
       jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
     html2pdf().set(options).from(billHTML).save();
+  };
+
+  const sendBillSMS = async (sessionId) => {
+    const phoneNumber = prompt('Enter customer phone number (e.g., 9876543210 or +919876543210):');
+    if (!phoneNumber) return;
+
+    setBillSMSLoading(prev => ({ ...prev, [sessionId]: true }));
+    try {
+      const res = await api.post('/orders/bill-share/send-sms', { sessionId, phoneNumber });
+      alert(res.data.message);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to send SMS');
+    } finally {
+      setBillSMSLoading(prev => ({ ...prev, [sessionId]: false }));
+    }
   };
 
   const buildBillHTML = (bill) => {
@@ -677,6 +693,14 @@ export default function AdminDashboard() {
                               onClick={(e) => { e.stopPropagation(); sendBillPDF(bill); }}
                             >
                               📥 Download Bill PDF
+                            </button>
+                            <button
+                              className="btn btn-sm"
+                              style={{ background: '#25D366', color: 'white', border: 'none' }}
+                              onClick={(e) => { e.stopPropagation(); sendBillSMS(bill.sessionId); }}
+                              disabled={billSMSLoading[bill.sessionId]}
+                            >
+                              {billSMSLoading[bill.sessionId] ? '📤 Sending...' : '💬 Send SMS Link'}
                             </button>
                             <button
                               className="btn btn-sm"
