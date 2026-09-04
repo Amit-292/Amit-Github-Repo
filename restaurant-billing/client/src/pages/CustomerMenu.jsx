@@ -311,11 +311,11 @@ export default function CustomerMenu() {
         </div>
       )}
 
-      {/* Cart bar (only on menu tab) */}
-      {activeTab === 'menu' && cartCount > 0 && (
+      {/* Cart bar (shows on both menu and orders tab if cart has items) */}
+      {cartCount > 0 && (
         <div className="cart-bar">
           <div className="cart-bar-info">
-            <div>{cartCount} item{cartCount > 1 ? 's' : ''}</div>
+            <div>{cartCount} item{cartCount > 1 ? 's' : ''} in cart</div>
             <strong>₹{cartTotal.toFixed(2)}</strong>
           </div>
           <button className="btn btn-primary" onClick={placeOrder} disabled={placing}>

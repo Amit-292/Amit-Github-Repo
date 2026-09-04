@@ -203,27 +203,117 @@ export default function AdminDashboard() {
   };
 
   const buildBillHTML = (bill) => {
+    // Collect all items from all orders
+    const allItems = bill.orders?.flatMap(o => o.items || []) || [];
+    const itemMap = {};
+    allItems.forEach(item => {
+      if (itemMap[item.name]) {
+        itemMap[item.name].quantity += item.quantity;
+        itemMap[item.name].total += item.price_at_order * item.quantity;
+      } else {
+        itemMap[item.name] = { 
+          quantity: item.quantity, 
+          total: item.price_at_order * item.quantity,
+          price: item.price_at_order 
+        };
+      }
+    });
+
+    const itemRows = Object.entries(itemMap)
+      .map(([name, data]) => `
+        <tr>
+          <td>${name}</td>
+          <td style="text-align: center;">${data.quantity}</td>
+          <td style="text-align: right;">₹${data.price.toFixed(2)}</td>
+          <td style="text-align: right;">₹${data.total.toFixed(2)}</td>
+        </tr>
+      `).join('');
+
+    const subtotal = Object.values(itemMap).reduce((sum, item) => sum + item.total, 0);
+    const gstAmount = subtotal * GST_RATE;
+    const grandTotal = subtotal + gstAmount;
+
     return `
       <html>
         <head>
           <meta charset="utf-8">
           <title>Bill Receipt</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-            .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; }
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f9f9f9; }
+            .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
             .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #6B4423; padding-bottom: 20px; }
-            .header h1 { color: #6B4423; margin: 0; }
+            .header h1 { color: #6B4423; margin: 0; font-size: 28px; }
+            .header p { color: #666; margin: 5px 0 0 0; }
+            .bill-info { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 14px; }
+            .bill-info div { flex: 1; }
+            .bill-info strong { display: block; color: #6B4423; }
             table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-            th { background-color: #6B4423; color: white; }
-            .summary { background: #F5E6D3; padding: 20px; border-radius: 6px; }
+            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+            th { background-color: #6B4423; color: white; font-weight: bold; }
+            tr:last-child td { border-bottom: 2px solid #6B4423; }
+            .summary { background: #F5E6D3; padding: 20px; border-radius: 6px; margin-top: 20px; }
+            .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+            .summary-row.total { font-size: 18px; font-weight: bold; color: #6B4423; border-top: 2px solid #6B4423; padding-top: 10px; margin-top: 10px; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; border-top: 1px solid #ddd; padding-top: 20px; }
           </style>
         </head>
         <body>
           <div class="container">
-            <div class="header"><h1>A5 Confectioners - Bill Receipt</h1></div>
-            <p><strong>Table:</strong> ${bill.tableNumber}</p>
-            <p><strong>Total:</strong> ₹${bill.grandTotal.toFixed(2)}</p>
+            <div class="header">
+              <h1>🍽️ A5 Confectioners</h1>
+              <p>Bill Receipt</p>
+            </div>
+            
+            <div class="bill-info">
+              <div>
+                <strong>Table No:</strong>
+                ${bill.tableNumber}${bill.groupId && bill.groupId !== '1' ? ` / Group ${bill.groupId}` : ''}
+              </div>
+              <div>
+                <strong>Date:</strong>
+                ${new Date().toLocaleDateString('en-IN')}
+              </div>
+              <div>
+                <strong>Time:</strong>
+                ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+
+            <h3 style="color: #6B4423; margin-bottom: 15px; border-bottom: 2px solid #6B4423; padding-bottom: 10px;">Order Details</h3>
+            
+            <table>
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th style="text-align: center;">Qty</th>
+                  <th style="text-align: right;">Price</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemRows}
+              </tbody>
+            </table>
+
+            <div class="summary">
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>₹${subtotal.toFixed(2)}</span>
+              </div>
+              <div class="summary-row">
+                <span>GST (5%):</span>
+                <span>₹${gstAmount.toFixed(2)}</span>
+              </div>
+              <div class="summary-row total">
+                <span>Grand Total:</span>
+                <span>₹${grandTotal.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div class="footer">
+              <p>Thank you for dining with us! 😊</p>
+              <p>Please visit us again!</p>
+            </div>
           </div>
         </body>
       </html>

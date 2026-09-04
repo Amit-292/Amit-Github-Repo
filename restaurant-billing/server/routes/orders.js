@@ -503,7 +503,7 @@ router.post('/bill-share/send-sms', auth, async (req, res) => {
     const result = await smsService.sendBillShareSMS(phoneNumber, sessionId, 'A5 Confectioners');
     
     if (result.success) {
-      res.json({ success: true, message: result.message, data: result });
+      res.json(result); // Return result directly so isDemo, phoneNumber, smsText are at top level
     } else {
       res.status(400).json({ error: result.message });
     }
