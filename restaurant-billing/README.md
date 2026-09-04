@@ -81,11 +81,13 @@ Backend API:        http://localhost:3001/api
 ### 📱 Customer Experience
 - **QR Code Menu**: Scan table QR code to view menu instantly
 - **Browse & Order**: Browse items by category with descriptions and prices
+- **Order Review**: Review items, adjust quantities, add special instructions before submitting
 - **Real-time Bill**: View itemized bill with live updates
 - **UPI Payment**: Pay via QR code with any UPI app (Google Pay, PhonePe, Paytm, etc.)
 - **Feedback**: Rate food (1-5 stars) and staff experience
 - **Bill Sharing**: Download bill PDF, share via WhatsApp or SMS
 - **Public Access**: No login required for customers
+- **Smooth Interface**: Professional animations and responsive design
 
 ### 🍳 Kitchen Staff
 - **Real-Time Display**: Live order board with visual status
@@ -142,6 +144,16 @@ Backend API:        http://localhost:3001/api
 | **QR Branding** | Logo above QR with branded container |
 | **Consistent Design** | Unified theme across all interfaces |
 
+### 🔄 Order Review Flow (NEW - Latest Update)
+| Feature | Details |
+|---------|---------|
+| **Order Review Page** | Customers review items before sending to kitchen |
+| **Item Management** | Adjust quantities, remove items, add special instructions |
+| **Real-Time Billing** | Live GST calculation and total display |
+| **Smooth UI/UX** | Professional animations and responsive design |
+| **Mobile Optimized** | Works seamlessly on all devices |
+| **Order Status** | Shows "Waiting for Confirmation" until admin approval |
+
 ---
 
 ## 📋 Complete Feature Checklist
@@ -169,6 +181,17 @@ Backend API:        http://localhost:3001/api
 - [x] Logo on all pages
 - [x] Logo on QR code
 - [x] Professional appearance
+
+#### From Initial Request #3 (Order Review Feature)
+- [x] Order review page before admin approval
+- [x] View all items with quantities and prices
+- [x] Modify item quantities with +/- buttons
+- [x] Remove items from order
+- [x] Add special instructions/notes
+- [x] Real-time billing with GST calculation
+- [x] Professional smooth UI with animations
+- [x] Mobile responsive design
+- [x] Customer friendly interface
 
 ---
 
