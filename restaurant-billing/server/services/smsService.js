@@ -60,17 +60,33 @@ async function sendBillShareSMS(phoneNumber, sessionId, restaurantName = 'A5 Con
 
     return {
       success: true,
-      message: `📱 SMS ready! Copy this and send manually:\n\n${message}`,
+      isDemo: true,
+      message: '📱 SMS Ready to Copy & Send Manually',
       phoneNumber: formattedPhone,
       billLink: billShareUrl,
       smsText: message,
-      instruction: 'Twilio not configured. To enable real SMS: Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER environment variables on Railway.'
+      fullMessage: `
+📱 SMS READY TO SEND
+
+To: ${formattedPhone}
+Message:
+${message}
+
+---
+Note: Twilio not configured for automatic sending.
+To enable automatic SMS on Railway, set these env variables:
+• TWILIO_ACCOUNT_SID
+• TWILIO_AUTH_TOKEN  
+• TWILIO_PHONE_NUMBER
+
+Then restart the app.
+      `.trim()
     };
   } catch (error) {
     console.error('SMS send failed:', error.message);
     return {
       success: false,
-      message: `SMS service: ${error.message}. Configure Twilio credentials for automatic SMS sending.`,
+      message: `SMS service error: ${error.message}`,
     };
   }
 }

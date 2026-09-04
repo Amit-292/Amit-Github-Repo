@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   const [bestSellers, setBestSellers] = useState([]);
   const [billCloseLoading, setBillCloseLoading] = useState({});
   const [billSMSLoading, setBillSMSLoading] = useState({});
+  const [smsModal, setSmsModal] = useState(null);
 
   const toggleFeedbackSelect = (id) => {
     setSelectedFeedbacks(prev => {
@@ -181,9 +182,21 @@ export default function AdminDashboard() {
     setBillSMSLoading(prev => ({ ...prev, [sessionId]: true }));
     try {
       const res = await api.post('/orders/bill-share/send-sms', { sessionId, phoneNumber });
-      alert(res.data.message);
+      if (res.data.isDemo) {
+        // Show SMS in modal for better visibility
+        setSmsModal({
+          phoneNumber: res.data.phoneNumber,
+          smsText: res.data.smsText,
+          billLink: res.data.billLink,
+          isDemo: true
+        });
+      } else {
+        alert(`✅ SMS sent successfully!`);
+        setSmsModal(null);
+      }
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to send SMS');
+      alert(`❌ ${err.response?.data?.error || 'Failed to send SMS'}`);
+      setSmsModal(null);
     } finally {
       setBillSMSLoading(prev => ({ ...prev, [sessionId]: false }));
     }
@@ -1309,6 +1322,123 @@ export default function AdminDashboard() {
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* SMS Modal */}
+      {smsModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '30px',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+          }}>
+            <h2 style={{ marginTop: 0, color: '#6B4423' }}>📱 SMS Message Ready</h2>
+            
+            {smsModal.isDemo && (
+              <div style={{ background: '#fff3cd', border: '1px solid #ffc107', borderRadius: 8, padding: 12, marginBottom: 16 }}>
+                <p style={{ margin: 0, color: '#856404', fontSize: '0.9rem' }}>
+                  <strong>ℹ️ Demo Mode:</strong> Twilio not configured. Copy this SMS and send manually.
+                </p>
+              </div>
+            )}
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#6B4423' }}>📞 Send To:</label>
+              <p style={{ background: '#f5f5f5', padding: 12, borderRadius: 6, margin: 0, fontFamily: 'monospace' }}>
+                {smsModal.phoneNumber}
+              </p>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#6B4423' }}>💬 Message Text:</label>
+              <textarea
+                readOnly
+                value={smsModal.smsText}
+                style={{
+                  width: '100%',
+                  minHeight: '120px',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  border: '2px solid #6B4423',
+                  fontFamily: 'monospace',
+                  fontSize: '0.9rem',
+                  boxSizing: 'border-box',
+                  color: '#333',
+                  background: '#f9f9f9'
+                }}
+              />
+            </div>
+
+            <div style={{ 
+              background: '#e8f5e9', 
+              border: '1px solid #4caf50', 
+              borderRadius: 8, 
+              padding: 12, 
+              marginBottom: 16 
+            }}>
+              <p style={{ margin: '0 0 8px 0', color: '#2e7d32', fontWeight: 600 }}>✅ How to send manually:</p>
+              <ol style={{ margin: '8px 0 0 16px', paddingLeft: 0, color: '#2e7d32', fontSize: '0.9rem' }}>
+                <li>Copy the SMS text above (Ctrl+C or Cmd+C)</li>
+                <li>Open your messaging app</li>
+                <li>Send to <strong>{smsModal.phoneNumber}</strong></li>
+              </ol>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(smsModal.smsText);
+                  alert('✅ SMS text copied to clipboard!');
+                }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  background: '#6B4423',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                📋 Copy SMS Text
+              </button>
+              <button
+                onClick={() => setSmsModal(null)}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  background: '#e0e0e0',
+                  color: '#333',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
