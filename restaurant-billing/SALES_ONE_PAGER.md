@@ -1,11 +1,11 @@
-# RestaurantSync - Sales One-Pager
+# RestroIQ - Sales One-Pager
 **By Eksperty Pvt Ltd** | Quick Reference for Sales Team
 
 ---
 
 ## THE PITCH (30 seconds)
 
-**"RestaurantSync is a cloud-based billing system that eliminates manual restaurant billing chaos."**
+**"RestroIQ is a cloud-based billing system that eliminates manual restaurant billing chaos."**
 
 - Customers scan QR → Instant menu → Order sent to kitchen
 - Admin reviews orders (prevents mistakes)
@@ -19,7 +19,7 @@
 
 ## THE PROBLEM (Why restaurants need this)
 
-| Issue | Cost | RestaurantSync Solution |
+| Issue | Cost | RestroIQ Solution |
 |-------|------|---------|
 | Manual billing errors (5%) | ₹10,000/month lost | 100% automated, zero errors |
 | Slow billing (15 mins) | Lost customers, bad reviews | 30 seconds per bill |
@@ -27,7 +27,7 @@
 | Manual reconciliation (30 mins) | 2 hours staff time/day | Instant automated reports |
 | No sales insights | Wrong menu decisions | Daily best-sellers report |
 
-**Total Monthly Loss**: ₹28,000 → **RestaurantSync Recovers This**
+**Total Monthly Loss**: ₹28,000 → **RestroIQ Recovers This**
 
 ---
 
@@ -88,7 +88,7 @@ Done! Bill moved to history
 
 **Total Monthly Loss: ₹28,000**
 
-**With RestaurantSync**:
+**With RestroIQ**:
 - Setup: 1 day (₹0)
 - Monthly cost: ₹999 (Professional plan)
 - Monthly recovery: ₹28,000
@@ -150,7 +150,7 @@ Done! Bill moved to history
 
 **Short Term**: "Let's do a 1-week free trial. I'll personally set it up—no credit card needed. You'll see the difference immediately."
 
-**Medium Term**: "Join 100+ restaurants already using RestaurantSync. Most customers report ROI within 2 weeks."
+**Medium Term**: "Join 100+ restaurants already using RestroIQ. Most customers report ROI within 2 weeks."
 
 **Long Term**: "This is the future of restaurant billing in India. First movers are already winning. Join them?"
 
@@ -182,7 +182,7 @@ Done! Bill moved to history
 ## CLOSING TECHNIQUE
 
 1. **Establish Pain**: "I know billing errors and kitchen chaos are costing you money every day."
-2. **Show Solution**: "RestaurantSync fixes this. Here's how..." [demo or walkthrough]
+2. **Show Solution**: "RestroIQ fixes this. Here's how..." [demo or walkthrough]
 3. **Share Proof**: "Here's what another restaurant like yours saved in the first month..." [case study]
 4. **Make the Ask**: "What if I could set you up in 1 day, free trial, and you'd know in 2 weeks if it works?"
 5. **Remove Friction**: "No credit card needed. No long contract. Cancel anytime. Fair?"

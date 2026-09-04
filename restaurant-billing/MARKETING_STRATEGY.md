@@ -1,11 +1,11 @@
-# RestaurantSync - Product Marketing Strategy
+# RestroIQ - Product Marketing Strategy
 ## By Eksperty Pvt Ltd
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-**RestaurantSync** is a cloud-based restaurant billing and kitchen management system designed specifically for the Indian restaurant market. It solves critical operational problems for small-to-medium restaurants by automating billing, streamlining kitchen workflows, and providing real-time business insights.
+**RestroIQ** is a cloud-based restaurant billing and kitchen management system designed specifically for the Indian restaurant market. It solves critical operational problems for small-to-medium restaurants by automating billing, streamlining kitchen workflows, and providing real-time business insights.
 
 **Key Position**: "Simple. Fast. Affordable. Restaurant Management That Just Works"
 
@@ -20,7 +20,7 @@
 ## 1. PRODUCT POSITIONING
 
 ### Core Value Proposition
-RestaurantSync eliminates manual billing chaos and kitchen confusion by creating a seamless digital ordering, approval, and payment system that restaurants can implement in 1 day.
+RestroIQ eliminates manual billing chaos and kitchen confusion by creating a seamless digital ordering, approval, and payment system that restaurants can implement in 1 day.
 
 ### Unique Selling Points
 1. **Group Billing (Unique)** - Split bills for groups (up to 8 per table). Only major feature competitors lack.
@@ -199,7 +199,7 @@ This is a growing category in India as restaurants move from manual systems to t
 ## 6. COMPETITIVE ADVANTAGES
 
 ### vs. DineWizz
-| Feature | RestaurantSync | DineWizz |
+| Feature | RestroIQ | DineWizz |
 |---------|---|---|
 | Starting Price | ₹499/month | ₹649/month |
 | Group Billing | ✅ Yes | ❌ No |
@@ -208,10 +208,10 @@ This is a growing category in India as restaurants move from manual systems to t
 | WhatsApp Sharing | ✅ Yes | ✅ Yes |
 | UPI QR Payments | ✅ Yes | ✅ Yes |
 
-**Winner**: RestaurantSync on price & speed
+**Winner**: RestroIQ on price & speed
 
 ### vs. Waiter.in
-| Feature | RestaurantSync | Waiter.in |
+| Feature | RestroIQ | Waiter.in |
 |---------|---|---|
 | Starting Price | ₹499/month | ₹799/month |
 | On-Premise Option | ✅ Yes (₹49,999) | ❌ No |
@@ -219,10 +219,10 @@ This is a growing category in India as restaurants move from manual systems to t
 | WhatsApp Integration | ✅ Yes | Partial |
 | Order Approval Gate | ✅ Yes | ❌ No |
 
-**Winner**: RestaurantSync on flexibility & features
+**Winner**: RestroIQ on flexibility & features
 
 ### vs. Manual Systems
-| Aspect | Manual | RestaurantSync |
+| Aspect | Manual | RestroIQ |
 |---------|---|---|
 | Billing Time | 10-15 mins | 30 seconds |
 | Billing Accuracy | 95% (5% errors) | 100% |
@@ -230,7 +230,7 @@ This is a growing category in India as restaurants move from manual systems to t
 | Data Insights | None | Daily reports |
 | ROI Timeline | N/A | 4-6 weeks |
 
-**Winner**: RestaurantSync on every metric
+**Winner**: RestroIQ on every metric
 
 ---
 
@@ -404,7 +404,7 @@ This is a growing category in India as restaurants move from manual systems to t
 ```
 Hi! 👋 I found that most restaurants lose ₹8,000-15,000/month due to billing errors and kitchen chaos.
 
-RestaurantSync fixes this in 1 day. 
+RestroIQ fixes this in 1 day. 
 
 ✓ Instant digital bills (30 seconds vs 15 mins)
 ✓ Zero errors (auto GST calculation)
@@ -423,18 +423,18 @@ Free demo? Call me at [phone]
 **Subject**: "How to reduce billing errors by 100% (in 1 day)"
 **Body**:
 - Pain point (billing delays/errors)
-- Solution (RestaurantSync)
+- Solution (RestroIQ)
 - Social proof (case study with numbers)
 - CTA (Free demo)
 
 ### LinkedIn (B2B)
-**Post**: "Manual restaurant billing is costing you ₹10,000/month in errors alone. RestaurantSync automates everything. Here's how... [link to case study]"
+**Post**: "Manual restaurant billing is costing you ₹10,000/month in errors alone. RestroIQ automates everything. Here's how... [link to case study]"
 
 ### YouTube (Educational)
 **Video Series**:
 1. "Why manual billing fails" (3 mins)
 2. "How digital billing saves money" (4 mins)
-3. "RestaurantSync demo" (8 mins)
+3. "RestroIQ demo" (8 mins)
 4. "Customer success story" (5 mins)
 
 ---
@@ -448,7 +448,7 @@ Free demo? Call me at [phone]
 
 ### 2. Restaurant Consultants
 - Referral commission (5-10% of annual value)
-- Include RestaurantSync in consulting packages
+- Include RestroIQ in consulting packages
 - Co-create content
 
 ### 3. Industry Associations
@@ -494,7 +494,7 @@ Free demo? Call me at [phone]
   - Reduced waste: ₹4,000
   - Better ratings → More customers: ₹8,000
   
-- **RestaurantSync Cost**: ₹999/month (Professional)
+- **RestroIQ Cost**: ₹999/month (Professional)
 
 - **Net Benefit**: ₹27,001/month
 
@@ -539,13 +539,13 @@ HIGH
 Cost  ├─ Competitor A │
       │ (₹2,000/mo)   │
       │               │
-      │ RestaurantSync│ Waiter.in
+      │ RestroIQ│ Waiter.in
       │ (₹499/mo)     │
       │               │
 LOW   └───────────────┤
       Easy              Complex
       
-RestaurantSync sits in the SWEET SPOT:
+RestroIQ sits in the SWEET SPOT:
 ✅ Low cost (₹499)
 ✅ Easy to use (1-day setup)
 ✅ Full-featured (not stripped down)
@@ -555,7 +555,7 @@ RestaurantSync sits in the SWEET SPOT:
 
 ## 18. FAQ FOR SALES TEAM
 
-**Q: Why should a restaurant choose RestaurantSync over manual billing?**
+**Q: Why should a restaurant choose RestroIQ over manual billing?**
 A: Simple. Restaurants save ₹28,000/month on average through error reduction, staff efficiency, and reduced waste. It pays for itself in less than 1 day.
 
 **Q: What if customers don't have smartphones?**
@@ -666,7 +666,7 @@ A: We're lighter (no hardware), faster to deploy (1 day), and cheaper (₹499 vs
 
 ## CONCLUSION
 
-RestaurantSync is positioned to capture 0.5-1% of the 200,000+ restaurant market in India within 18 months. With strong product-market fit, clear differentiation, and compelling ROI, the product is ready for aggressive go-to-market.
+RestroIQ is positioned to capture 0.5-1% of the 200,000+ restaurant market in India within 18 months. With strong product-market fit, clear differentiation, and compelling ROI, the product is ready for aggressive go-to-market.
 
 **Next Action**: Launch soft beta with 10 customers this month. Collect testimonials and refine messaging. Then scale acquisition in Month 2.
 

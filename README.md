@@ -1,8 +1,11 @@
-# Eksperty – Training & Placement Website
+# Eksperty – Training & Placement Website & RestroIQ
 
 A modern, responsive training and placement website built with pure HTML/CSS/JavaScript and deployed globally via **GitHub Pages** using **Terraform**.
 
+Also includes **RestroIQ** - The Intelligence Behind Your Restaurant, a complete cloud-based billing and restaurant management solution.
+
 🌍 **Live Site:** `https://<YOUR_GITHUB_USERNAME>.github.io/desktop-tutorial/`
+🍽️ **RestroIQ App:** `https://restaurant-billing-production-a629.up.railway.app`
 
 ---
 
@@ -20,7 +23,38 @@ A modern, responsive training and placement website built with pure HTML/CSS/Jav
 
 ---
 
-## 🚀 Deploy with Terraform
+## 🍽️ RestroIQ - Restaurant Management Solution
+
+**RestroIQ: The Intelligence Behind Your Restaurant**
+
+A complete cloud-based billing and restaurant management platform designed for Indian restaurants.
+
+### Key Features
+- **Smart QR Menu:** Customers scan QR code → browse menu → order from their phone
+- **Real-Time Kitchen Display System (KDS):** Orders appear instantly, track preparation status
+- **Automatic Billing:** GST-compliant invoices generated in seconds
+- **UPI Payments:** Dynamic QR codes for Google Pay, PhonePe, Paytam, BHIM
+- **Admin Dashboard:** Analytics, bill history, best sellers, customer feedback
+- **Group Billing:** Split bills for groups (up to 8 separate orders per table)
+- **WhatsApp Integration:** Share bills and bills via WhatsApp with PDF downloads
+- **Feedback System:** 5-star ratings, customer insights, export reports
+
+### Live Demo
+- **Admin Panel:** https://restaurant-billing-production-a629.up.railway.app/admin
+- **Kitchen Display:** https://restaurant-billing-production-a629.up.railway.app/kitchen
+- **Customer Menu:** https://restaurant-billing-production-a629.up.railway.app/table/1/1
+- **Marketing Brochure:** `restaurant-billing/MARKETING_BROCHURE.html` (10-page professional sales document with screenshots)
+
+### Pricing
+- **Starter Plan:** ₹1,000/month (10 tables, basic features)
+- **Professional Plan:** ₹1,500/month (50 tables, advanced analytics)
+- **Business Plan:** ₹3,000/month (unlimited tables, white-label options)
+
+**Contact:** hr@eksperty.com | WhatsApp: +91 6302672256 | Website: eksperty.com
+
+---
+
+
 
 ### Prerequisites
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) ≥ 1.3

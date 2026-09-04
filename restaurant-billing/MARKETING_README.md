@@ -1,4 +1,4 @@
-# RestaurantSync Marketing Materials
+# RestroIQ Marketing Materials
 **Your Complete Sales & Marketing Kit**
 
 ---
@@ -63,7 +63,7 @@ Quick reference for sales team
 - Better customer experience: ₹8,000
 - **Total: ₹28,000/month**
 
-**RestaurantSync Cost**: ₹999/month (Professional plan)
+**RestroIQ Cost**: ₹999/month (Professional plan)
 
 **Net Benefit**: ₹27,001/month
 

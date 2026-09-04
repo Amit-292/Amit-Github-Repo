@@ -1,5 +1,4 @@
 # How to Add Real Screenshots to Marketing Brochure
-
 ## 📍 WHERE TO ADD IMAGES
 
 ### Page 3: "Our Solution - How It Works"
