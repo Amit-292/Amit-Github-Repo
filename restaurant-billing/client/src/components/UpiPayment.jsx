@@ -72,12 +72,58 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
 
   // ── THANK YOU ──
   if (stage === 'thankyou') {
+    const billShareUrl = `${window.location.origin}/bill/${sessionId}`;
+    
+    const shareWhatsApp = () => {
+      const text = `🍽️ *A5 Confectioners Bill*\n\nTable: ${tableId}\n💰 Total: ₹${amount.toFixed(2)}\n\nView my bill: ${billShareUrl}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    };
+
+    const downloadBill = () => {
+      // Redirect to bill share page
+      window.location.href = billShareUrl;
+    };
+
     return (
       <div className="upi-section text-center">
         <div style={{ fontSize: '4rem', marginBottom: 16 }}>🙏</div>
         <h2 style={{ color: '#27ae60', marginBottom: 8 }}>Thank You!</h2>
         <p className="text-muted">Payment confirmed. Hope to see you again!</p>
-        <p className="text-muted" style={{ marginTop: 8, fontSize: '0.8rem' }}>
+        
+        <div style={{ marginTop: 20, display: 'flex', gap: '10px', flexDirection: 'column' }}>
+          <button
+            onClick={downloadBill}
+            style={{
+              padding: '12px 16px',
+              background: '#6B4423',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            📥 Download Bill PDF
+          </button>
+          <button
+            onClick={shareWhatsApp}
+            style={{
+              padding: '12px 16px',
+              background: '#25D366',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            💬 Share on WhatsApp
+          </button>
+        </div>
+
+        <p className="text-muted" style={{ marginTop: 16, fontSize: '0.8rem' }}>
           Scan the QR code on your table to start a new order.
         </p>
       </div>

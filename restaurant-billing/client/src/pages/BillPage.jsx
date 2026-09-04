@@ -169,13 +169,16 @@ export default function BillPage() {
 
   return (
     <div>
-      <header className="header">
-        <div className="header-inner">
-          <div>
-            <h1>🧾 Your Bill</h1>
-            <p style={{ opacity: 0.85, fontSize: '0.85rem' }}>
+      <header className="header" style={{ background: '#6B4423' }}>
+        <div className="header-inner" style={{ maxWidth: '100%', padding: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img src="/logo.jpg" alt="A5 Confectioners" style={{ height: '50px', borderRadius: '4px' }} />
+            <div>
+              <h1 style={{ margin: '0', color: 'white', fontSize: '24px' }}>🧾 Your Bill</h1>
+              <p style={{ margin: '4px 0', opacity: 0.9, fontSize: '0.85rem', color: '#F5E6D3' }}>
                 Table {tableId}{groupId !== '1' ? ` · Group ${groupId}` : ''}
               </p>
+            </div>
           </div>
           <Link
             to={`/table/${tableId}/${groupId}`}

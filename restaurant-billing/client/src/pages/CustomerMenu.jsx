@@ -159,19 +159,22 @@ export default function CustomerMenu() {
 
   return (
     <div style={{ paddingBottom: cartCount > 0 ? 90 : 20 }}>
-      <header className="header">
-        <div className="header-inner">
-          <div>
-            <h1>🍽️ {restaurantName}</h1>
-            <p style={{ opacity: 0.85, fontSize: '0.85rem' }}>
+      <header className="header" style={{ background: '#6B4423' }}>
+        <div className="header-inner" style={{ maxWidth: '100%', padding: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img src="/logo.jpg" alt="A5 Confectioners" style={{ height: '50px', borderRadius: '4px' }} />
+            <div>
+              <h1 style={{ margin: '0', color: 'white', fontSize: '24px' }}>A5 Confectioners</h1>
+              <p style={{ margin: '4px 0', opacity: 0.9, fontSize: '0.85rem', color: '#F5E6D3' }}>
                 Table {tableId}{groupId !== '1' ? ` · Group ${groupId}` : ''}
               </p>
+            </div>
           </div>
           {myOrders.length > 0 && (
             <Link
               to={`/table/${tableId}/${groupId}/bill`}
               className="btn"
-              style={{ background: hasReadyOrders ? '#27ae60' : 'rgba(255,255,255,0.25)', color: 'white', fontSize: '0.8rem', padding: '8px 14px', borderRadius: 8, fontWeight: 600 }}
+              style={{ background: hasReadyOrders ? '#6B9E78' : 'rgba(255,255,255,0.25)', color: 'white', fontSize: '0.8rem', padding: '8px 14px', borderRadius: 8, fontWeight: 600 }}
             >
               {hasReadyOrders ? '🎉 Pay Now' : '🧾 Bill'}
             </Link>
@@ -179,7 +182,7 @@ export default function CustomerMenu() {
         </div>
 
         {/* Tab bar */}
-        <div className="customer-tabs">
+        <div className="customer-tabs" style={{ background: '#8B5A3C', borderTop: '1px solid #F5E6D3' }}>
           <button
             className={`customer-tab ${activeTab === 'menu' ? 'active' : ''}`}
             onClick={() => setActiveTab('menu')}
