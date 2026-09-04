@@ -319,7 +319,7 @@ export default function CustomerMenu() {
             <strong>₹{cartTotal.toFixed(2)}</strong>
           </div>
           <button className="btn btn-primary" onClick={placeOrder} disabled={placing}>
-            {placing ? 'Placing...' : '🛒 Place Order'}
+            {placing ? '⏳ Loading...' : '🔍 Review Order'}
           </button>
         </div>
       )}

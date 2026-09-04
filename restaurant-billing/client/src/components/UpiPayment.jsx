@@ -379,10 +379,19 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
         </button>
       )}
 
-      {/* Deep link — secondary, may not work on all apps */}
-      <div style={{ marginTop: 12, padding: '10px 12px', background: '#fff8e1', borderRadius: 8, border: '1px solid #f39c12', fontSize: '0.82rem', color: '#7a5000', marginBottom: 12 }}>
-        ✅ <strong>All UPI Apps Supported:</strong> GooglePay, PhonePe, Paytm, BHIM, Amazon Pay, WhatsApp Pay, etc. Scan the QR above or use the button below.
+      {/* Instructions for PhonePe and other apps */}
+      <div style={{ marginTop: 12, padding: '10px 12px', background: '#e8f5e9', borderRadius: 8, border: '1px solid #27ae60', fontSize: '0.82rem', color: '#155724', marginBottom: 12 }}>
+        <strong>💡 How to Pay:</strong>
+        <ol style={{ margin: '6px 0 0 16px', paddingLeft: 0 }}>
+          <li><strong>PhonePe:</strong> Scan the QR above with your PhonePe camera</li>
+          <li><strong>Google Pay:</strong> Click "Open UPI App" or scan QR</li>
+          <li><strong>Any UPI App:</strong> Copy UPI ID and use Send Money feature</li>
+        </ol>
+        <p style={{ margin: '6px 0 0 0', fontSize: '0.75rem', opacity: 0.9 }}>
+          📌 <strong>UPI Address:</strong> <code style={{ background: 'rgba(0,0,0,0.1)', padding: '2px 4px', borderRadius: 2 }}>{upiId}</code>
+        </p>
       </div>
+
       <a href={upiUrl} className="upi-btn" style={{ opacity: 0.85 }}>
         💳 Open UPI App (tap to pay)
       </a>

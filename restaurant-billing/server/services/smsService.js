@@ -35,7 +35,7 @@ async function sendBillShareSMS(phoneNumber, sessionId, restaurantName = 'A5 Con
     const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : '+91' + phoneNumber;
 
     // Generate bill share link
-    const billShareUrl = `${process.env.APP_URL || 'http://localhost:5173'}/bill/${sessionId}`;
+    const billShareUrl = `${process.env.APP_URL || 'https://restaurant-billing-production-a629.up.railway.app'}/bill/${sessionId}`;
 
     // Create SMS message
     const message = `🍽️ Hi! Your bill from ${restaurantName} is ready.\n\nView & Download: ${billShareUrl}\n\nShare your bill and download PDF. Thank you for dining with us! 😊`;
@@ -55,20 +55,22 @@ async function sendBillShareSMS(phoneNumber, sessionId, restaurantName = 'A5 Con
       };
     }
 
-    // Demo mode: log the SMS instead of sending
+    // Demo mode: return SMS text for manual sending
     console.log(`[SMS Demo Mode] Would send SMS to ${formattedPhone}:\n${message}`);
 
     return {
       success: true,
-      message: 'SMS ready to send (demo mode - configure TWILIO_ACCOUNT_SID to enable)',
+      message: `📱 SMS ready! Copy this and send manually:\n\n${message}`,
       phoneNumber: formattedPhone,
       billLink: billShareUrl,
+      smsText: message,
+      instruction: 'Twilio not configured. To enable real SMS: Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER environment variables on Railway.'
     };
   } catch (error) {
     console.error('SMS send failed:', error.message);
     return {
       success: false,
-      message: `Failed to send SMS: ${error.message}`,
+      message: `SMS service: ${error.message}. Configure Twilio credentials for automatic SMS sending.`,
     };
   }
 }
@@ -80,7 +82,7 @@ async function sendBillShareSMS(phoneNumber, sessionId, restaurantName = 'A5 Con
  * @returns {string} SMS text ready to send
  */
 function generateBillSMSText(sessionId, restaurantName = 'A5 Confectioners') {
-  const billShareUrl = `${process.env.APP_URL || 'http://localhost:5173'}/bill/${sessionId}`;
+  const billShareUrl = `${process.env.APP_URL || 'https://restaurant-billing-production-a629.up.railway.app'}/bill/${sessionId}`;
   return `🍽️ Hi! Your bill from ${restaurantName} is ready.\n\nView & Download: ${billShareUrl}\n\nShare your bill and download PDF. Thank you for dining with us! 😊`;
 }
 
