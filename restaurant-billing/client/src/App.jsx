@@ -6,6 +6,7 @@ import BillShare from './pages/BillShare';
 import KitchenDisplay from './pages/KitchenDisplay';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import OrderReview from './pages/OrderReview';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('adminToken');
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/admin/login" replace />} />
         <Route path="/table/:tableId" element={<CustomerMenu />} />
         <Route path="/table/:tableId/:groupId" element={<CustomerMenu />} />
+        <Route path="/table/:tableId/review" element={<OrderReview />} />
         <Route path="/table/:tableId/bill" element={<BillPage />} />
         <Route path="/table/:tableId/:groupId/bill" element={<BillPage />} />
         <Route path="/bill/:sessionId" element={<BillShare />} />

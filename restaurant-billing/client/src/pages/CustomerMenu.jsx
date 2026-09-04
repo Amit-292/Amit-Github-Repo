@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import api from '../api';
 import MenuItem from '../components/MenuItem';
@@ -21,6 +21,7 @@ const STATUS_META = {
 
 export default function CustomerMenu() {
   const { tableId, groupId = '1' } = useParams();
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -134,17 +135,13 @@ export default function CustomerMenu() {
     if (!cartCount || !session) return;
     setPlacing(true);
     try {
-      const items = Object.entries(cart).map(([menuItemId, quantity]) => ({
-        menuItemId: Number(menuItemId),
-        quantity,
-      }));
-      await api.post('/orders', { sessionId: session.id, tableId, items });
-      setCart({});
-      await loadOrders(session.id);
-      setActiveTab('orders');
-      showToast('✅ Order placed! Watch it get prepared below.');
+      // Save cart and session info to sessionStorage for review page
+      sessionStorage.setItem('orderCart', JSON.stringify(cart));
+      sessionStorage.setItem('orderSession', JSON.stringify(session));
+      // Navigate to review page
+      navigate(`/table/${tableId}/review`);
     } catch (err) {
-      showToast('❌ Failed to place order. Please try again.');
+      showToast('❌ Failed to proceed. Please try again.');
     } finally {
       setPlacing(false);
     }
