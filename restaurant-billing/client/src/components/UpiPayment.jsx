@@ -236,11 +236,13 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
       <div className="upi-amount">₹{amount.toFixed(2)}</div>
 
       {/* QR — primary & most reliable method */}
-      <p style={{ fontWeight: 700, fontSize: '0.95rem', margin: '12px 0 6px' }}>
+      <p style={{ fontWeight: 700, fontSize: '0.95rem', margin: '12px 0 6px', color: '#6B4423' }}>
         📷 Scan QR to Pay <span style={{ fontWeight: 400, color: '#888', fontSize: '0.82rem' }}>(works on all UPI apps)</span>
       </p>
-      <div className="upi-qr">
+      <div className="upi-qr" style={{ background: '#F5E6D3', padding: '16px', borderRadius: '8px', border: '2px solid #6B4423', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+        <img src="/logo.jpg" alt="A5 Confectioners" style={{ height: '40px' }} />
         <QRCodeSVG value={upiUrl} size={200} level="M" includeMargin />
+        <p style={{ color: '#6B4423', fontWeight: '600', fontSize: '0.9rem', margin: 0 }}>A5 Confectioners</p>
       </div>
 
       {/* UPI ID copy */}
