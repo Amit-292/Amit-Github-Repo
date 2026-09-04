@@ -2,9 +2,20 @@
 
 A modern, production-ready restaurant billing and order management system with QR code ordering, real-time kitchen display, SMS/WhatsApp integration, and comprehensive analytics.
 
-**Status**: ✅ **LIVE IN PRODUCTION** | **Version**: 2.0.0
+**Status**: ✅ **LIVE IN PRODUCTION** | **Version**: 2.1.0
 
 🚀 **LIVE DEMO**: https://a5confectioners-restaurant.up.railway.app
+
+---
+
+## 📱 Quick Test Links
+
+| Interface | Full URL |
+|-----------|----------|
+| **👨‍💼 Admin Dashboard** | https://a5confectioners-restaurant.up.railway.app/admin/login |
+| **🍳 Kitchen Display** | https://a5confectioners-restaurant.up.railway.app/kitchen |
+| **🛒 Customer Menu (Table 1)** | https://a5confectioners-restaurant.up.railway.app/table/1 |
+| **💰 Sample Bill** | https://a5confectioners-restaurant.up.railway.app/bill/BILL_ID |
 
 ---
 
@@ -39,10 +50,20 @@ https://a5confectioners-restaurant.up.railway.app/table/3
 ... (replace '1', '2', '3' with your table numbers)
 ```
 - **Access**: No login required
-- **View**: Browse menu, place orders, view bill
-- **Payment**: Pay via UPI QR code
+- **View**: Browse menu, place orders, review before submission
+- **Payment**: Pay via UPI (GooglePay, PhonePe, Paytm, BHIM, Amazon Pay, WhatsApp Pay)
 - **Feedback**: Submit rating and feedback
 - **Purpose**: Customer-facing interface
+
+#### 💳 **UPI Payment**
+```
+UPI ID: kurmapuamit@axl
+Restaurant: A5 Confectioners
+```
+- **Supported Apps**: Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, WhatsApp Pay
+- **Payment Method**: QR Code scan or UPI link
+- **Camera Scanner**: Use phone camera to scan QR code
+- **Manual Entry**: Copy-paste UPI ID to any app
 
 #### 📄 **Bill Sharing** (Public Access)
 ```
@@ -83,7 +104,13 @@ Backend API:        http://localhost:3001/api
 - **Browse & Order**: Browse items by category with descriptions and prices
 - **Order Review**: Review items, adjust quantities, add special instructions before submitting
 - **Real-time Bill**: View itemized bill with live updates
-- **UPI Payment**: Pay via QR code with any UPI app (Google Pay, PhonePe, Paytm, etc.)
+- **💳 UPI Payment**:
+  - QR Code scanning (works on all devices)
+  - Camera-based payment verification
+  - Support for all UPI apps (Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, WhatsApp Pay)
+  - One-tap payment with UPI deep links
+  - Copy-paste UPI ID option
+  - UPI ID: `kurmapuamit@axl`
 - **Feedback**: Rate food (1-5 stars) and staff experience
 - **Bill Sharing**: Download bill PDF, share via WhatsApp or SMS
 - **Public Access**: No login required for customers
@@ -117,6 +144,17 @@ Backend API:        http://localhost:3001/api
 ---
 
 ## 🌟 Phase 2 Features (NEW - September 2026)
+
+### 💳 UPI Payment Integration (NEW - Latest Update)
+| Feature | Details |
+|---------|---------|
+| **UPI ID** | kurmapuamit@axl (A5 Confectioners) |
+| **QR Code Payment** | Universal QR works on all UPI apps |
+| **Camera Scanner** | Use phone camera to scan payment QR |
+| **Supported Apps** | Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, WhatsApp Pay |
+| **One-Tap Payment** | Deep links for instant payment |
+| **UPI ID Copy** | Copy-paste option for manual entry |
+| **Payment Verification** | Real-time payment status updates |
 
 ### 📤 Advanced Sharing
 | Feature | Details |
@@ -192,6 +230,17 @@ Backend API:        http://localhost:3001/api
 - [x] Professional smooth UI with animations
 - [x] Mobile responsive design
 - [x] Customer friendly interface
+
+#### From Initial Request #4 (UPI Payment with Scanner)
+- [x] UPI ID: kurmapuamit@axl
+- [x] QR code payment support
+- [x] Camera-based QR scanner
+- [x] Support for all UPI apps
+- [x] Google Pay, PhonePe, Paytam, BHIM support
+- [x] One-tap UPI deep links
+- [x] Manual UPI ID entry (copy-paste)
+- [x] Payment status verification
+- [x] Production-ready payment flow
 
 ---
 
