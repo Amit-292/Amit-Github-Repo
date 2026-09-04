@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import api from '../api';
 
@@ -29,6 +29,9 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
   const [stage, setStage] = useState('payment'); // 'payment' | 'feedback' | 'thankyou'
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
 
   const [feedback, setFeedback] = useState({
     foodRating: 0,
@@ -40,7 +43,40 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
     anniversary: '',
   });
 
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(restaurantName)}&am=${amount}&tn=${encodeURIComponent('AS Confectioners Bill')}&cu=INR`;
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(restaurantName)}&am=${amount}&tn=${encodeURIComponent('A5 Confectioners Bill')}&cu=INR`;
+
+  // Camera QR Scanner functions
+  const startCamera = async () => {
+    try {
+      const constraints = {
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setShowCamera(true);
+    } catch (err) {
+      console.error('Camera access denied:', err);
+      alert('Camera access denied. Please allow camera permission in browser settings.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+    }
+    setShowCamera(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   const handlePaid = async () => {
     setLoading(true);
@@ -258,6 +294,43 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
   }
 
   // ── PAYMENT ──
+  if (showCamera) {
+    return (
+      <div className="upi-section">
+        <p style={{ fontWeight: 700, fontSize: '0.95rem', margin: '0 0 12px', color: '#6B4423' }}>
+          📱 PhonePe/Google Pay QR Scanner
+        </p>
+        <div style={{ background: '#F5E6D3', padding: '12px', borderRadius: '8px', border: '2px solid #6B4423', marginBottom: '12px' }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            style={{ width: '100%', borderRadius: '6px', maxHeight: '300px' }}
+          />
+        </div>
+        <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px', textAlign: 'center' }}>
+          📸 Position your camera to scan QR code from payment screen
+        </p>
+        <button
+          onClick={stopCamera}
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            background: '#f5222d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          ✕ Close Camera
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="upi-section">
       <p className="text-muted" style={{ marginBottom: 4 }}>Total Amount</p>
@@ -271,6 +344,7 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
         <img src="/logo.jpg" alt="A5 Confectioners" style={{ height: '40px' }} />
         <QRCodeSVG value={upiUrl} size={200} level="M" includeMargin />
         <p style={{ color: '#6B4423', fontWeight: '600', fontSize: '0.9rem', margin: 0 }}>A5 Confectioners</p>
+        <p style={{ color: '#6B4423', fontWeight: '500', fontSize: '0.85rem', margin: 0 }}>UPI: {upiId}</p>
       </div>
 
       {/* UPI ID copy */}
@@ -283,9 +357,31 @@ export default function UpiPayment({ amount, restaurantName, upiId, sessionId, t
         >📋 Copy</button>
       </div>
 
+      {/* QR Scanner Button */}
+      {typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (
+        <button
+          onClick={startCamera}
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            background: '#6B4423',
+            color: '#F5E6D3',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            fontSize: '14px',
+            marginTop: '12px',
+            marginBottom: '12px'
+          }}
+        >
+          📱 Scan with Phone Camera
+        </button>
+      )}
+
       {/* Deep link — secondary, may not work on all apps */}
       <div style={{ marginTop: 12, padding: '10px 12px', background: '#fff8e1', borderRadius: 8, border: '1px solid #f39c12', fontSize: '0.82rem', color: '#7a5000', marginBottom: 12 }}>
-        ⚠️ <strong>PhonePe users:</strong> Scan the QR code above or open PhonePe → Pay → enter UPI ID manually. The button below may be blocked by PhonePe's security policy.
+        ✅ <strong>All UPI Apps Supported:</strong> GooglePay, PhonePe, Paytm, BHIM, Amazon Pay, WhatsApp Pay, etc. Scan the QR above or use the button below.
       </div>
       <a href={upiUrl} className="upi-btn" style={{ opacity: 0.85 }}>
         💳 Open UPI App (tap to pay)

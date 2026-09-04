@@ -25,8 +25,8 @@ app.use('/api/feedback', require('./routes/feedback'));
 // Config endpoint
 app.get('/api/config', (req, res) => {
   res.json({
-    upiId: process.env.UPI_ID || 'restaurant@upi',
-    restaurantName: process.env.RESTAURANT_NAME || 'AS Confectioners',
+    upiId: process.env.UPI_ID || 'kurmapuamit@axl',
+    restaurantName: process.env.RESTAURANT_NAME || 'A5 Confectioners',
   });
 });
 
