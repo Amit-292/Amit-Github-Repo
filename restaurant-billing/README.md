@@ -8,6 +8,74 @@ A modern, production-ready restaurant billing and order management system with Q
 
 ---
 
+## 🌐 Application URLs
+
+### **Live Production Links**
+
+#### 👨‍💼 **Admin Dashboard** (Staff Only)
+```
+https://a5confectioners-restaurant.up.railway.app/admin/login
+```
+- **Username**: admin
+- **Password**: admin123 (⚠️ Change this immediately in production!)
+- **Access**: Menu management, table setup, bills, analytics, reports, feedback
+- **Purpose**: Restaurant staff and management
+
+#### 🍳 **Kitchen Display System**
+```
+https://a5confectioners-restaurant.up.railway.app/kitchen
+```
+- **Access**: Kitchen staff only
+- **View**: Real-time order updates
+- **Features**: Live orders, status updates (Pending → Preparing → Ready → Served)
+- **Refresh**: Auto-updates every 30 seconds via Socket.io
+- **Purpose**: Coordinate food preparation
+
+#### 📱 **Customer Menu** (Scan Table QR Code)
+```
+https://a5confectioners-restaurant.up.railway.app/table/1
+https://a5confectioners-restaurant.up.railway.app/table/2
+https://a5confectioners-restaurant.up.railway.app/table/3
+... (replace '1', '2', '3' with your table numbers)
+```
+- **Access**: No login required
+- **View**: Browse menu, place orders, view bill
+- **Payment**: Pay via UPI QR code
+- **Feedback**: Submit rating and feedback
+- **Purpose**: Customer-facing interface
+
+#### 📄 **Bill Sharing** (Public Access)
+```
+https://a5confectioners-restaurant.up.railway.app/bill/SESSION_ID
+```
+- **Access**: No login required
+- **View**: Bill details, download PDF, share via WhatsApp/SMS
+- **Purpose**: Customer bill viewing and sharing
+
+---
+
+### **Local Development Links** (If running locally)
+```
+Admin Dashboard:    http://localhost:3000/admin/login
+Kitchen Display:    http://localhost:3000/kitchen
+Customer Menu:      http://localhost:3000/table/1
+Bill Sharing:       http://localhost:3000/bill/SESSION_ID
+Backend API:        http://localhost:3001/api
+```
+
+---
+
+### **Quick Access Guide**
+
+| User Type | URL | Purpose | Authentication |
+|-----------|-----|---------|-----------------|
+| **Restaurant Admin** | `/admin/login` | Manage business | Username/Password |
+| **Kitchen Staff** | `/kitchen` | View orders | Open access |
+| **Customer** | `/table/{number}` | Order food, pay | No login |
+| **Billing** | `/bill/{sessionId}` | View/share bill | No login |
+
+---
+
 ## 🎯 Key Features
 
 ### 📱 Customer Experience
