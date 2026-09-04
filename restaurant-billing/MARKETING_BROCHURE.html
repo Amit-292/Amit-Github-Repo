@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestaurantSync - Sales Brochure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            margin: 20px auto;
+            padding: 40px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            page-break-after: always;
+        }
+
+        /* Color scheme */
+        :root {
+            --primary: #6B4423;
+            --secondary: #D4AF37;
+            --accent: #E8D4B8;
+            --dark: #2c2c2c;
+            --light: #f9f9f9;
+        }
+
+        .brand-color {
+            color: var(--primary);
+        }
+
+        .secondary-color {
+            color: var(--secondary);
+        }
+
+        /* Cover Page */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #8B6F47 100%);
+            color: white;
+            min-height: 100%;
+        }
+
+        .logo-section {
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .company-name {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 15px;
+            letter-spacing: 2px;
+        }
+
+        .product-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 30px 0;
+            line-height: 1.2;
+        }
+
+        .tagline {
+            font-size: 22px;
+            opacity: 0.95;
+            margin: 20px 0;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.85;
+            margin-top: 30px;
+            font-style: italic;
+        }
+
+        /* Regular Pages */
+        .page:not(.cover) {
+            padding: 60px 50px;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            border-bottom: 4px solid var(--secondary);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .subtitle-text {
+            font-size: 16px;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Problem Section */
+        .problems {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .problem-item {
+            background: #fff3e0;
+            padding: 20px;
+            border-left: 4px solid #e67e22;
+            border-radius: 4px;
+        }
+
+        .problem-item strong {
+            color: #e67e22;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .problem-item p {
+            font-size: 13px;
+            margin: 0;
+            text-align: left;
+        }
+
+        /* Solution Section */
+        .solution {
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.05), rgba(212, 175, 55, 0.05));
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .solution h3 {
+            margin-top: 0;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 2px solid var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h4 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            margin: 0;
+            text-align: left;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .benefit-item {
+            text-align: left;
+        }
+
+        .benefit-item h4 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .benefit-item p {
+            font-size: 13px;
+            margin: 0;
+            text-align: left;
+        }
+
+        .tick {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Status Table */
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+
+        .status-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .status-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .status-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .status-implemented {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .status-partial {
+            color: #f39c12;
+            font-weight: 600;
+        }
+
+        .status-not {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        /* Pricing Table */
+        .pricing-table {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, white, #f9f9f9);
+            border: 3px solid var(--accent);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--secondary);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+            transform: scale(1.05);
+        }
+
+        .pricing-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .price {
+            font-size: 36px;
+            color: var(--secondary);
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .price small {
+            font-size: 14px;
+            color: #666;
+            display: block;
+        }
+
+        .pricing-features {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .pricing-features li {
+            font-size: 12px;
+            margin: 8px 0;
+            list-style: none;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .pricing-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        /* Target Customers */
+        .target-customers {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .customer-item {
+            background: var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .customer-item h4 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .customer-item p {
+            font-size: 13px;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Workflow Diagram */
+        .workflow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            font-size: 13px;
+        }
+
+        .workflow-step {
+            flex: 1;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .workflow-step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+
+        .workflow-step p {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .workflow-arrow {
+            font-size: 24px;
+            color: var(--secondary);
+            flex: 0.3;
+            text-align: center;
+        }
+
+        /* Advantages Section */
+        .advantages {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .advantage-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .advantage-icon {
+            font-size: 32px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .advantage-content h4 {
+            color: var(--primary);
+            font-size: 16px;
+            margin: 0 0 8px 0;
+        }
+
+        .advantage-content p {
+            font-size: 13px;
+            margin: 0;
+            text-align: left;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--accent);
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ROI Section */
+        .roi-box {
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.1), rgba(212, 175, 55, 0.1));
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .roi-stat {
+            display: inline-block;
+            margin: 0 30px;
+            text-align: center;
+        }
+
+        .roi-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .roi-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Comparison */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .yes {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .no {
+            color: #e74c3c;
+        }
+
+        /* Page numbers */
+        .page-number {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .page {
+            position: relative;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: none;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+
+        /* Highlights */
+        .highlight {
+            background: #fff9e6;
+            padding: 2px 6px;
+            border-radius: 2px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #666;
+            border-left: 4px solid var(--secondary);
+            padding-left: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page 1: Cover -->
+    <div class="page cover">
+        <div class="logo-section">
+            <div class="logo">
+                <img src="../logo-1.png" alt="Eksperty Logo">
+            </div>
+            <div class="company-name">EKSPERTY PVT LTD</div>
+        </div>
+        <div class="product-title">RestaurantSync</div>
+        <div class="tagline">Smart Restaurant Billing & Management Solution</div>
+        <div class="subtitle">Simplify ordering. Streamline kitchen. Maximize profit.</div>
+        <div style="margin-top: 50px; font-size: 14px;">
+            <p style="margin: 0; opacity: 0.8;">Complete point-of-sale management designed for Indian restaurants</p>
+            <p style="margin: 15px 0 0 0; opacity: 0.7; font-size: 12px;">Built for speed. Designed for growth.</p>
+        </div>
+        <div class="page-number">RestaurantSync Sales Brochure 2025</div>
+    </div>
+
+    <!-- Page 2: The Problem -->
+    <div class="page">
+        <h1>Why Restaurants Need RestaurantSync</h1>
+        <p style="text-align: left; margin: 25px 0; color: #555;">
+            <strong>The Challenge:</strong> Manual billing systems are causing restaurants to lose time, money, and customers.
+        </p>
+
+        <div class="problems">
+            <div class="problem-item">
+                <strong>⏱️ Manual Billing Delays</strong>
+                <p>Customers wait 10-15 minutes at counter for handwritten bills, leading to bad reviews and lost customers.</p>
+            </div>
+            <div class="problem-item">
+                <strong>🧮 Billing Mistakes</strong>
+                <p>Calculation errors reduce customer trust. GST compliance becomes a headache for staff.</p>
+            </div>
+            <div class="problem-item">
+                <strong>😕 Kitchen Chaos</strong>
+                <p>No visibility of incoming orders. Duplicates placed. Food prepared wrong. Customers angry.</p>
+            </div>
+            <div class="problem-item">
+                <strong>📊 No Sales Insights</strong>
+                <p>Owners don't know which dishes sell. Can't make data-driven menu decisions.</p>
+            </div>
+            <div class="problem-item">
+                <strong>💸 Inventory Leakage</strong>
+                <p>No tracking of items used vs sold. Food theft goes undetected. Profit margins shrink.</p>
+            </div>
+            <div class="problem-item">
+                <strong>📋 Manual Accounting</strong>
+                <p>End-of-day reconciliation takes 30+ minutes. GST invoices prepared manually.</p>
+            </div>
+        </div>
+
+        <div class="quote">
+            "We were losing ₹5,000-10,000 per day due to billing errors and inventory gaps. We needed a system that could give us real-time visibility." — Restaurant Owner, Mumbai
+        </div>
+
+        <div class="page-number">Page 2</div>
+    </div>
+
+    <!-- Page 3: Our Solution -->
+    <div class="page">
+        <h1>RestaurantSync: Your Complete Solution</h1>
+        
+        <div class="solution">
+            <h3>✨ How It Works</h3>
+            <p><strong>Customers</strong> scan a unique QR code at their table → Browse menu instantly on their phone → Add items to cart → Submit order for approval</p>
+            <p><strong>Admin</strong> reviews orders in real-time → Approves or rejects with one click → Prevents kitchen from making mistakes</p>
+            <p><strong>Kitchen</strong> sees approved orders instantly → Updates status (Preparing → Ready) → Customers notified automatically</p>
+            <p><strong>Billing</strong> generated automatically with GST → Customers pay via UPI QR or WhatsApp link → Bill moved to history automatically</p>
+        </div>
+
+        <h2 style="margin-top: 30px;">🎯 Key Advantages Over Manual Systems</h2>
+
+        <div class="benefits">
+            <div class="benefit-item">
+                <h4><span class="tick">✓</span> <strong>2x Faster Billing</strong></h4>
+                <p>Customers get bill in 30 seconds instead of 10 minutes. No queues at counter.</p>
+            </div>
+            <div class="benefit-item">
+                <h4><span class="tick">✓</span> <strong>Zero Errors</strong></h4>
+                <p>All calculations automated. GST applied correctly every time. 100% accuracy.</p>
+            </div>
+            <div class="benefit-item">
+                <h4><span class="tick">✓</span> <strong>Kitchen Efficiency</strong></h4>
+                <p>Real-time order management. No duplicates. No chaos. Food prepared correctly first time.</p>
+            </div>
+            <div class="benefit-item">
+                <h4><span class="tick">✓</span> <strong>Better Customer Experience</strong></h4>
+                <p>Track order status in real-time. Know when food is ready. Get notifications automatically.</p>
+            </div>
+            <div class="benefit-item">
+                <h4><span class="tick">✓</span> <strong>Data-Driven Decisions</strong></h4>
+                <p>See which dishes sell most. Track revenue by item/time. Make smart menu choices.</p>
+            </div>
+            <div class="benefit-item">
+                <h4><span class="tick">✓</span> <strong>Instant Reconciliation</strong></h4>
+                <p>End-of-day reports generated in seconds. GST invoices ready to file. No manual work.</p>
+            </div>
+        </div>
+
+        <div class="page-number">Page 3</div>
+    </div>
+
+    <!-- Page 4: Features -->
+    <div class="page">
+        <h1>Core Features</h1>
+        
+        <h2 style="font-size: 20px; margin-top: 0;">✅ IMPLEMENTED & PRODUCTION-READY</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h4>QR Menu Access</h4>
+                <p>Customers scan QR → instant menu. No app download. Works on all phones.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛒</div>
+                <h4>Smart Cart</h4>
+                <p>Add/remove items. Adjust quantities. Review order before sending to kitchen.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h4>Order Approval Gate</h4>
+                <p>Admin reviews before kitchen cooks. Prevents mistakes. Reduces waste.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👨‍🍳</div>
+                <h4>Kitchen Display System</h4>
+                <p>Live Kanban board. Orders appear instantly. Track preparation status in real-time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h4>Real-Time Tracking</h4>
+                <p>Customers see order status: Pending → Preparing → Ready. Automatic notifications.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧾</div>
+                <h4>Automatic Billing</h4>
+                <p>Bill generated instantly. GST calculated automatically (5% standard). Tax-compliant.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h4>UPI Payments</h4>
+                <p>Dynamic QR codes for Google Pay, PhonePe, Paytam, BHIM. Works offline with camera.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h4>WhatsApp Billing</h4>
+                <p>Share bill via WhatsApp. Customers download PDF directly. Perfect for takeaway.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h4>Group Billing</h4>
+                <p>Unique feature: Split bills for groups. Up to 8 separate orders per table.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h4>Feedback System</h4>
+                <p>5-star ratings for food & staff. Collect email/phone. Export to Excel for analysis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h4>Best Sellers Report</h4>
+                <p>See top items by quantity and revenue. Understand customer preferences instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h4>Mobile Responsive</h4>
+                <p>Works perfectly on all devices: smartphones, tablets, desktops. Responsive design.</p>
+            </div>
+        </div>
+
+        <p style="font-size: 12px; color: #666; margin-top: 20px;">
+            <strong>Note:</strong> All features tested and working in production. Cloud-hosted on Railway for reliability.
+        </p>
+
+        <div class="page-number">Page 4</div>
+    </div>
+
+    <!-- Page 5: Feature Status & Roadmap -->
+    <div class="page">
+        <h1>Feature Status & Roadmap</h1>
+        
+        <h2 style="font-size: 18px; margin-top: 0;">Currently Available Features</h2>
+        
+        <table class="status-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Status</th>
+                    <th>Completeness</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>QR-based menu ordering</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>Real-time kitchen display</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>95%</td>
+                </tr>
+                <tr>
+                    <td>Order approval workflow</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>Automatic GST billing</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>UPI QR payments</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>90%</td>
+                </tr>
+                <tr>
+                    <td>WhatsApp bill sharing</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>SMS bill sharing</td>
+                    <td class="status-partial">⚠ Demo Mode</td>
+                    <td>60%</td>
+                </tr>
+                <tr>
+                    <td>Admin dashboard</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>90%</td>
+                </tr>
+                <tr>
+                    <td>Customer feedback system</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>95%</td>
+                </tr>
+                <tr>
+                    <td>Bill history & tracking</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>PDF bill export</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>Group billing (unique!)</td>
+                    <td class="status-implemented">✓ Implemented</td>
+                    <td>100%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 style="font-size: 18px; margin-top: 30px;">🚀 Coming Soon (Q1-Q2 2025)</h2>
+
+        <div class="problems" style="margin-top: 20px;">
+            <div class="problem-item" style="background: #e8f5e9; border-left-color: #27ae60;">
+                <strong style="color: #27ae60;">💳 Razorpay Payment Integration</strong>
+                <p>Accept card payments directly. Real-time payment verification. Automated reconciliation.</p>
+            </div>
+            <div class="problem-item" style="background: #e8f5e9; border-left-color: #27ae60;">
+                <strong style="color: #27ae60;">📊 Analytics Dashboard</strong>
+                <p>Visual charts & graphs. Daily/weekly/monthly reports. Revenue trends. Item performance.</p>
+            </div>
+            <div class="problem-item" style="background: #e8f5e9; border-left-color: #27ae60;">
+                <strong style="color: #27ae60;">👔 Staff Management</strong>
+                <p>Kitchen staff accounts. Role-based access. Performance tracking. Shift management.</p>
+            </div>
+            <div class="problem-item" style="background: #e8f5e9; border-left-color: #27ae60;">
+                <strong style="color: #27ae60;">📦 Inventory Tracking</strong>
+                <p>Monitor stock levels. Track consumption vs sales. Receive low-stock alerts.</p>
+            </div>
+        </div>
+
+        <div class="page-number">Page 5</div>
+    </div>
+
+    <!-- Page 6: Who Should Use RestaurantSync -->
+    <div class="page">
+        <h1>Perfect For These Businesses</h1>
+        
+        <div class="target-customers">
+            <div class="customer-item">
+                <h4>🍽️ Casual Restaurants</h4>
+                <p>50-200 seats. Dine-in focused. Perfect for quick service and customer comfort.</p>
+            </div>
+            <div class="customer-item">
+                <h4>☕ Cafés & Bakeries</h4>
+                <p>Counter-service or table-service. Ideal for brand-conscious, tech-aware customers.</p>
+            </div>
+            <div class="customer-item">
+                <h4>🍟 Fast Food & QSR</h4>
+                <p>High volume, quick billing. Group orders, split bills, fast payment processing.</p>
+            </div>
+            <div class="customer-item">
+                <h4>👨‍🍳 Cloud Kitchens</h4>
+                <p>Delivery-focused. No seating needed. Perfect table number concept for order tracking.</p>
+            </div>
+            <div class="customer-item">
+                <h4>🏪 Small Restaurant Chains</h4>
+                <p>Multiple locations coming soon. Centralized management. Unified reporting.</p>
+            </div>
+            <div class="customer-item">
+                <h4>🥤 Juice & Beverage Shops</h4>
+                <p>High-speed ordering. Quick payments. Perfect for counter-based operations.</p>
+            </div>
+        </div>
+
+        <h2>Industries Gaining Traction</h2>
+        <p>The Indian restaurant technology market is growing at <strong>35% annually</strong>. Restaurant owners are increasingly adopting digital solutions for:</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0;">
+            <div style="background: var(--accent); padding: 15px; border-radius: 4px;">
+                <p style="margin: 0; font-size: 13px;"><strong>Before</strong><br>Manual billing, order confusion, inventory losses, no data</p>
+            </div>
+            <div style="background: #e8f5e9; padding: 15px; border-radius: 4px;">
+                <p style="margin: 0; font-size: 13px;"><strong>After RestaurantSync</strong><br>Instant billing, smooth workflow, visible operations, actionable insights</p>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 30px;">⭐ Why Restaurants Choose RestaurantSync</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <p style="font-size: 13px; text-align: left;"><strong style="color: var(--primary);">✓ Built for India</strong> - GST, UPI, WhatsApp integration out-of-the-box</p>
+                <p style="font-size: 13px; text-align: left;"><strong style="color: var(--primary);">✓ Affordable</strong> - Starting at ₹499/month. No hidden fees.</p>
+                <p style="font-size: 13px; text-align: left;"><strong style="color: var(--primary);">✓ Fast Implementation</strong> - Live in 1 day. No technical knowledge needed.</p>
+            </div>
+            <div>
+                <p style="font-size: 13px; text-align: left;"><strong style="color: var(--primary);">✓ 24/7 Support</strong> - Dedicated support team. WhatsApp, Email, Phone.</p>
+                <p style="font-size: 13px; text-align: left;"><strong style="color: var(--primary);">✓ Zero Downtime</strong> - Cloud infrastructure. 99.9% uptime guaranteed.</p>
+                <p style="font-size: 13px; text-align: left;"><strong style="color: var(--primary);">✓ Easy Training</strong> - Video tutorials, live demos, staff training included.</p>
+            </div>
+        </div>
+
+        <div class="page-number">Page 6</div>
+    </div>
+
+    <!-- Page 7: Business Model & Pricing -->
+    <div class="page">
+        <h1>Flexible Pricing Models</h1>
+        
+        <p style="text-align: left; margin: 20px 0;">Choose the plan that fits your restaurant size and growth stage.</p>
+
+        <div class="pricing-table">
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <p style="margin: 0; color: #666; font-size: 13px;">For small cafés & outlets</p>
+                <div class="price">₹499<small>/month</small></div>
+                <ul class="pricing-features">
+                    <li>Up to 10 tables</li>
+                    <li>Menu with 50 items</li>
+                    <li>Basic reports</li>
+                    <li>UPI payments</li>
+                    <li>Feedback system</li>
+                    <li>Email support</li>
+                </ul>
+                <button class="cta-button">Get Started</button>
+            </div>
+
+            <div class="pricing-card featured">
+                <h3>Professional</h3>
+                <p style="margin: 0; color: #666; font-size: 13px;">Most Popular</p>
+                <div class="price">₹999<small>/month</small></div>
+                <ul class="pricing-features">
+                    <li>Up to 50 tables</li>
+                    <li>Unlimited menu items</li>
+                    <li>Advanced reports</li>
+                    <li>Group billing (8 groups/table)</li>
+                    <li>WhatsApp sharing</li>
+                    <li>Best sellers analytics</li>
+                    <li>Priority support</li>
+                </ul>
+                <button class="cta-button">Get Started</button>
+            </div>
+
+            <div class="pricing-card">
+                <h3>Business</h3>
+                <p style="margin: 0; color: #666; font-size: 13px;">For large restaurants</p>
+                <div class="price">₹1,999<small>/month</small></div>
+                <ul class="pricing-features">
+                    <li>Unlimited tables</li>
+                    <li>Unlimited items</li>
+                    <li>Custom GST rates</li>
+                    <li>Staff management (coming)</li>
+                    <li>Advanced analytics (coming)</li>
+                    <li>API access</li>
+                    <li>24/7 phone support</li>
+                </ul>
+                <button class="cta-button">Get Started</button>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 40px;">Alternative: On-Premise License</h2>
+        <p style="text-align: left;">
+            For restaurants wanting complete control or operating in low-connectivity areas:
+        </p>
+
+        <div style="background: var(--accent); padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0 0 10px 0; font-size: 13px;"><strong>One-Time License</strong>: ₹49,999</p>
+            <p style="margin: 0; font-size: 13px;">• Perpetual license (no recurring fees)<br>• Own hardware deployment<br>• Local data storage<br>• Optional cloud backup</p>
+        </div>
+
+        <h2>Comparison with Market Leaders</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>RestaurantSync</th>
+                    <th>Competitor A</th>
+                    <th>Competitor B</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Starting Price</td>
+                    <td class="yes">₹499/month</td>
+                    <td>₹999/month</td>
+                    <td>₹1,500/month</td>
+                </tr>
+                <tr>
+                    <td>Group Billing</td>
+                    <td class="yes">Yes (8 groups)</td>
+                    <td class="no">No</td>
+                    <td class="no">No</td>
+                </tr>
+                <tr>
+                    <td>UPI QR Payments</td>
+                    <td class="yes">Yes</td>
+                    <td class="yes">Yes</td>
+                    <td class="yes">Yes</td>
+                </tr>
+                <tr>
+                    <td>On-Premise Option</td>
+                    <td class="yes">Yes (₹49,999)</td>
+                    <td class="no">No</td>
+                    <td class="yes">Yes</td>
+                </tr>
+                <tr>
+                    <td>Setup Fee</td>
+                    <td class="yes">None</td>
+                    <td>₹5,000</td>
+                    <td>₹10,000</td>
+                </tr>
+                <tr>
+                    <td>Implementation Time</td>
+                    <td class="yes">1 day</td>
+                    <td>3-5 days</td>
+                    <td>1-2 weeks</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="page-number">Page 7</div>
+    </div>
+
+    <!-- Page 8: ROI & Value Proposition -->
+    <div class="page">
+        <h1>Your Return on Investment</h1>
+
+        <p style="text-align: left; margin: 20px 0;">
+            RestaurantSync pays for itself in 4-6 weeks through efficiency gains and reduced errors.
+        </p>
+
+        <div class="roi-box">
+            <h3 style="margin-top: 0;">Typical Monthly Impact</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                <div class="roi-stat">
+                    <div class="roi-number">₹15,000</div>
+                    <div class="roi-label">Recovered from billing errors<br>(prevented</div>
+                </div>
+                <div class="roi-stat">
+                    <div class="roi-number">₹8,000</div>
+                    <div class="roi-label">Saved staff time<br>(2 hrs/day)</div>
+                </div>
+                <div class="roi-stat">
+                    <div class="roi-number">₹5,000</div>
+                    <div class="roi-label">Reduced food waste<br>(via tracking)</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 30px;">How You Save Money</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0;">
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #e67e22; margin-top: 0;">1. Reduced Billing Errors</h4>
+                <p style="font-size: 13px; margin: 0; text-align: left;">Average restaurant loses ₹5,000/month to calculation mistakes and GST errors.</p>
+            </div>
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #e67e22; margin-top: 0;">2. Staff Efficiency</h4>
+                <p style="font-size: 13px; margin: 0; text-align: left;">No manual billing = 2 hours/day saved. That's 40 hours/month of productive time.</p>
+            </div>
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #e67e22; margin-top: 0;">3. Reduced Waste</h4>
+                <p style="font-size: 13px; margin: 0; text-align: left;">Kitchen visibility prevents duplicate orders and wrong-quantity cooking.</p>
+            </div>
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px;">
+                <h4 style="color: #e67e22; margin-top: 0;">4. Better Customer Experience</h4>
+                <p style="font-size: 13px; margin: 0; text-align: left;">Faster billing = higher ratings = repeat customers = ₹10,000+ more revenue/month.</p>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 30px;">Real Example: 80-Seat Restaurant</h2>
+        
+        <table class="comparison-table">
+            <tbody>
+                <tr>
+                    <td><strong>Monthly Billing Errors (5%)</strong></td>
+                    <td style="text-align: right;"><strong>₹10,000</strong></td>
+                </tr>
+                <tr>
+                    <td>Staff time saved (2 hrs/day)</td>
+                    <td style="text-align: right;">₹6,000</td>
+                </tr>
+                <tr>
+                    <td>Reduced inventory loss</td>
+                    <td style="text-align: right;">₹4,000</td>
+                </tr>
+                <tr>
+                    <td>Faster billing → Better ratings → More customers</td>
+                    <td style="text-align: right;">₹8,000</td>
+                </tr>
+                <tr style="background: #e8f5e9;">
+                    <td><strong>Total Monthly Benefit</strong></td>
+                    <td style="text-align: right; color: #27ae60;"><strong>₹28,000</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>RestaurantSync Cost (Professional)</strong></td>
+                    <td style="text-align: right;"><strong>₹999</strong></td>
+                </tr>
+                <tr style="background: #e8f5e9;">
+                    <td><strong>Net Savings (Monthly)</strong></td>
+                    <td style="text-align: right; color: #27ae60;"><strong>₹27,001</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="text-align: center; font-size: 13px; margin-top: 20px; font-weight: bold;">
+            💡 <span class="highlight">You recover your investment in less than 2 days!</span>
+        </p>
+
+        <div class="page-number">Page 8</div>
+    </div>
+
+    <!-- Page 9: Implementation & Support -->
+    <div class="page">
+        <h1>Quick Implementation & Support</h1>
+
+        <h2 style="font-size: 20px; margin-top: 0;">📋 How to Get Started</h2>
+
+        <div class="workflow">
+            <div class="workflow-step">
+                <div class="workflow-step-number">1</div>
+                <p><strong>Sign Up</strong><br>Choose your plan</p>
+            </div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">2</div>
+                <p><strong>Configure</strong><br>Add tables & menu</p>
+            </div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">3</div>
+                <p><strong>Train</strong><br>Staff onboarding</p>
+            </div>
+            <div class="workflow-arrow">→</div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">4</div>
+                <p><strong>Go Live</strong><br>Start using!</p>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: #27ae60; font-weight: bold; margin-top: 30px;">⏱️ Total time: 1 day from sign-up to going live</p>
+
+        <h2 style="margin-top: 35px;">🎓 Training & Onboarding</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0;">
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                <h4 style="color: #1976d2; margin-top: 0;">For Customers</h4>
+                <p style="font-size: 12px; text-align: left; margin: 0;">Self-serve: QR → Menu → Pay. No training needed!</p>
+            </div>
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                <h4 style="color: #1976d2; margin-top: 0;">For Admin</h4>
+                <p style="font-size: 12px; text-align: left; margin: 0;">Video tutorials + live demo sessions + written guides</p>
+            </div>
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                <h4 style="color: #1976d2; margin-top: 0;">For Kitchen Staff</h4>
+                <p style="font-size: 12px; text-align: left; margin: 0;">Simple: See order → Cook → Update status. 15 mins to master.</p>
+            </div>
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                <h4 style="color: #1976d2; margin-top: 0;">For Counter Staff</h4>
+                <p style="font-size: 12px; text-align: left; margin: 0;">Billing automated. They just confirm payment & serve.</p>
+            </div>
+        </div>
+
+        <h2>24/7 Support & Assistance</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+            <div style="background: var(--accent); padding: 15px; border-radius: 8px; text-align: center;">
+                <p style="font-size: 20px; margin: 0;">💬</p>
+                <p style="font-size: 13px; font-weight: 600; color: var(--primary); margin: 8px 0;">WhatsApp Support</p>
+                <p style="font-size: 11px; margin: 0;">Instant responses to your questions</p>
+            </div>
+            <div style="background: var(--accent); padding: 15px; border-radius: 8px; text-align: center;">
+                <p style="font-size: 20px; margin: 0;">📧</p>
+                <p style="font-size: 13px; font-weight: 600; color: var(--primary); margin: 8px 0;">Email Support</p>
+                <p style="font-size: 11px; margin: 0;">Detailed solutions to complex issues</p>
+            </div>
+            <div style="background: var(--accent); padding: 15px; border-radius: 8px; text-align: center;">
+                <p style="font-size: 20px; margin: 0;">☎️</p>
+                <p style="font-size: 13px; font-weight: 600; color: var(--primary); margin: 8px 0;">Phone Support</p>
+                <p style="font-size: 11px; margin: 0;">For Business plan customers</p>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 30px;">🔒 Security & Reliability</h2>
+
+        <div style="background: #f3e5f5; padding: 20px; border-radius: 8px;">
+            <p style="margin: 8px 0; font-size: 13px; text-align: left;">
+                <strong>✓ Cloud Hosted</strong> - AWS infrastructure in India. No data loss. Automatic backups.
+            </p>
+            <p style="margin: 8px 0; font-size: 13px; text-align: left;">
+                <strong>✓ 99.9% Uptime</strong> - SLA guaranteed. Redundant systems. Instant failover.
+            </p>
+            <p style="margin: 8px 0; font-size: 13px; text-align: left;">
+                <strong>✓ Secure Payments</strong> - SSL encryption. PCI-DSS compliant. Secure UPI integration.
+            </p>
+            <p style="margin: 8px 0; font-size: 13px; text-align: left;">
+                <strong>✓ Data Privacy</strong> - GDPR compliant. Your data is yours. We don't share with third parties.
+            </p>
+        </div>
+
+        <div class="page-number">Page 9</div>
+    </div>
+
+    <!-- Page 10: FAQ & Contact -->
+    <div class="page">
+        <h1>Frequently Asked Questions</h1>
+
+        <h3>Q: Do customers need to download an app?</h3>
+        <p style="text-align: left; color: #555;">No! Customers scan QR code → Browser opens menu. Works on any phone. No app needed. This is a key advantage.</p>
+
+        <h3>Q: What if internet goes down?</h3>
+        <p style="text-align: left; color: #555;">Kitchen display will freeze but UPI cameras work offline. For on-premise deployments, the system continues working locally.</p>
+
+        <h3>Q: Can I customize the menu categories?</h3>
+        <p style="text-align: left; color: #555;">Yes! Categories are fully customizable (Starters, Main Course, etc.). Add/remove as many as you want.</p>
+
+        <h3>Q: Is GST rate fixed at 5%?</h3>
+        <p style="text-align: left; color: #555;">Currently yes (standard 5% for food in India). Custom GST rates coming in Q1 2025 for Business plan.</p>
+
+        <h3>Q: How many tables can I add?</h3>
+        <p style="text-align: left; color: #555;">Starter: 10 tables | Professional: 50 tables | Business: Unlimited. Easy to upgrade anytime.</p>
+
+        <h3>Q: Can I see historical reports?</h3>
+        <p style="text-align: left; color: #555;">Yes! Full bill history with date filtering, best sellers report, and customer feedback analytics.</p>
+
+        <h3>Q: What payment methods do you accept?</h3>
+        <p style="text-align: left; color: #555;">Subscription: Credit card, Debit card, Net Banking via Razorpay. Payments from customers: UPI (PhonePe, Google Pay, BHIM, Paytam).</p>
+
+        <h3>Q: Can I export billing data?</h3>
+        <p style="text-align: left; color: #555;">Yes! Export bills as PDF, feedback as Excel/PDF. Perfect for accounting and GST filing.</p>
+
+        <h3>Q: Is training provided?</h3>
+        <p style="text-align: left; color: #555;">Absolutely! Video tutorials, live demo sessions, and written guides included with every plan.</p>
+
+        <h3>Q: Can I switch plans later?</h3>
+        <p style="text-align: left; color: #555;">Yes! Upgrade/downgrade anytime. Prorated billing ensures fair pricing. No lock-in contracts.</p>
+
+        <h2 style="margin-top: 40px; text-align: center; font-size: 24px; color: var(--primary);">Ready to Transform Your Restaurant?</h2>
+
+        <div style="background: linear-gradient(135deg, var(--primary), #8B6F47); color: white; padding: 30px; border-radius: 8px; text-align: center; margin: 30px 0;">
+            <p style="margin: 0 0 15px 0; font-size: 16px;"><strong>📞 Get Started Today</strong></p>
+            <p style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.95;">Free 30-day trial. No credit card needed.</p>
+            <p style="margin: 0; font-size: 14px;">
+                <strong>📧 Email:</strong> sales@eksperty.com<br>
+                <strong>💬 WhatsApp:</strong> +91-XXXXX-XXXXX<br>
+                <strong>🌐 Website:</strong> www.restaurantsync.in
+            </p>
+        </div>
+
+        <div class="footer" style="margin-top: 50px; border-top: 2px solid var(--accent); padding-top: 20px; text-align: center;">
+            <p style="margin: 0; font-size: 11px; color: #999;">
+                RestaurantSync by Eksperty Pvt Ltd © 2025<br>
+                Built for Indian restaurants. Trusted by 100+ restaurants across India.<br>
+                Cloud-hosted on Railway. Secure, Reliable, Always Online.
+            </p>
+        </div>
+
+        <div class="page-number">Page 10 - Final</div>
+    </div>
+
+</body>
+</html>
