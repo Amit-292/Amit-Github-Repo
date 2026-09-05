@@ -96,19 +96,18 @@
       display: flex;
       flex-direction: column;
       background: rgba(255, 255, 255, 0.85);
-      overflow: hidden;
     }
 
     .top-band {
       background: var(--raspberry);
       width: 100%;
-      height: 6px;
+      height: 5px;
       flex-shrink: 0;
     }
 
     .header {
       background: rgba(255, 255, 255, 0.95);
-      padding: 14px 30px;
+      padding: 12px 28px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -121,11 +120,11 @@
     .logo-container {
       display: flex;
       justify-content: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .logo-container img {
-      height: 60px;
+      height: 55px;
       width: auto;
     }
 
@@ -138,60 +137,61 @@
 
     .brand-name {
       font-family: 'Inter', sans-serif;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
       color: var(--raspberry);
       letter-spacing: -1px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
+      line-height: 1;
     }
 
     .brand-tagline {
-      font-size: 9px;
+      font-size: 8px;
       color: var(--text-mid);
       font-weight: 600;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       text-transform: uppercase;
     }
 
     .brand-subtitle {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--raspberry);
       font-weight: 600;
-      margin-top: 4px;
-      line-height: 1.3;
+      margin-top: 3px;
+      line-height: 1.2;
     }
 
     .content {
-      padding: 14px 30px;
+      padding: 12px 28px;
       flex: 1;
       background: rgba(255, 255, 255, 0.92);
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      gap: 7px;
     }
 
     .headline-section {
       background: var(--raspberry-pale);
-      padding: 12px 16px;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      padding: 10px 14px;
+      border-radius: 5px;
       border-left: 4px solid var(--raspberry);
       flex-shrink: 0;
     }
 
     .headline {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--raspberry);
-      margin-bottom: 4px;
-      line-height: 1.2;
+      margin-bottom: 3px;
+      line-height: 1.1;
     }
 
     .subheadline {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-mid);
       font-weight: 500;
-      line-height: 1.4;
+      line-height: 1.3;
     }
 
     .subheadline strong {
@@ -202,124 +202,123 @@
     .sarcasm-box {
       background: #FFFAF0;
       border-left: 3px solid var(--raspberry);
-      padding: 10px 14px;
-      margin-bottom: 10px;
-      border-radius: 5px;
+      padding: 9px 12px;
+      border-radius: 4px;
       font-style: italic;
       color: var(--text-dark);
-      font-size: 11px;
-      line-height: 1.4;
+      font-size: 10px;
+      line-height: 1.3;
       flex-shrink: 0;
     }
 
     .services-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--raspberry);
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       flex-shrink: 0;
     }
 
     .services-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 6px;
+      margin-bottom: 7px;
       flex-shrink: 0;
     }
 
     .service-card {
       background: var(--gray-light);
       border: 1px solid var(--raspberry-pale);
-      border-radius: 6px;
-      padding: 10px;
+      border-radius: 5px;
+      padding: 8px;
     }
 
     .service-icon {
-      font-size: 18px;
-      margin-bottom: 3px;
-    }
-
-    .service-name {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--raspberry);
+      font-size: 16px;
       margin-bottom: 2px;
     }
 
+    .service-name {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--raspberry);
+      margin-bottom: 1px;
+    }
+
     .service-desc {
-      font-size: 9px;
+      font-size: 8px;
       color: var(--text-mid);
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
     .tech-section {
       background: var(--raspberry);
       color: var(--white);
-      padding: 12px 16px;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      padding: 10px 14px;
+      border-radius: 5px;
+      margin-bottom: 7px;
       flex-shrink: 0;
     }
 
     .tech-title {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .tech-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      font-size: 9px;
-      line-height: 1.3;
+      gap: 3px;
+      font-size: 8px;
+      line-height: 1.2;
     }
 
     .tech-item {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .tech-item::before {
       content: "✓";
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
     }
 
     .selling-point {
       background: linear-gradient(135deg, var(--raspberry) 0%, var(--raspberry-light) 100%);
       color: var(--white);
-      padding: 12px 16px;
-      border-radius: 6px;
+      padding: 10px 14px;
+      border-radius: 5px;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       box-shadow: 0 4px 12px rgba(155, 27, 75, 0.2);
       flex-shrink: 0;
     }
 
     .selling-point-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .selling-point-text {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
     .highlight {
       background: rgba(255, 255, 255, 0.25);
-      padding: 1px 4px;
+      padding: 0px 3px;
       border-radius: 2px;
       font-weight: 800;
     }
@@ -327,22 +326,21 @@
     .cta-section {
       background: var(--raspberry-pale);
       border: 2px dashed var(--raspberry);
-      border-radius: 6px;
-      padding: 10px;
+      border-radius: 5px;
+      padding: 9px 12px;
       text-align: center;
-      margin-bottom: 8px;
       flex-shrink: 0;
     }
 
     .cta-text {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-dark);
       font-weight: 600;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .cta-highlight {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--raspberry);
       font-style: italic;
@@ -351,28 +349,28 @@
     .poster-footer {
       background: var(--text-dark);
       color: var(--white);
-      padding: 10px 30px;
+      padding: 9px 28px;
       text-align: center;
-      font-size: 9px;
-      line-height: 1.4;
+      font-size: 8px;
+      line-height: 1.3;
       border-top: 2px solid var(--raspberry);
       flex-shrink: 0;
     }
 
     .poster-footer p {
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .footer-brand {
       font-weight: 700;
       color: var(--white);
-      margin-bottom: 3px;
-      font-size: 10px;
+      margin-bottom: 2px;
+      font-size: 9px;
     }
 
     .footer-details {
-      font-size: 8px;
-      line-height: 1.4;
+      font-size: 7px;
+      line-height: 1.3;
       color: var(--white);
     }
 
@@ -384,7 +382,7 @@
     .footer-contact {
       font-weight: 600;
       color: #FF8A9B;
-      font-size: 8px;
+      font-size: 7px;
     }
 
     @media print {
@@ -495,7 +493,7 @@
       <div class="poster-footer">
         <div class="footer-brand">EKSPERTY | Digital Innovation & Automation</div>
         <div class="footer-details">
-          📧 Email: <a href="mailto:hr@eksperty.com">hr@eksperty.com</a> | 📞 +91 6302672256 | 🌐 <a href="https://www.eksperty.com" target="_blank">www.eksperty.com</a>
+          📧 <a href="mailto:hr@eksperty.com">hr@eksperty.com</a> | 📞 +91 6302672256 | 🌐 <a href="https://www.eksperty.com" target="_blank">www.eksperty.com</a>
         </div>
         <p class="footer-contact">🌐 Modern Websites | 🍽️ Restaurant Billing | ⚙️ Full Project Automation</p>
       </div>
