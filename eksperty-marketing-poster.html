@@ -25,6 +25,14 @@
     @page {
       size: A4 portrait;
       margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     body {
@@ -34,18 +42,18 @@
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      padding: 30px 20px;
+      padding: 20px;
     }
 
     .poster {
       width: 794px;
-      min-height: 1123px;
+      height: 1123px;
       position: relative;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,0.18);
     }
 
-    /* BACKGROUND LAYER 1 - AZURE IMAGE */
+    /* Background Layer 1 - AZURE */
     .poster::before {
       content: '';
       position: absolute;
@@ -62,7 +70,7 @@
       pointer-events: none;
     }
 
-    /* BACKGROUND LAYER 2 - COPILOT ICON */
+    /* Background Layer 2 - COPILOT */
     .poster::after {
       content: '';
       position: absolute;
@@ -88,33 +96,36 @@
       display: flex;
       flex-direction: column;
       background: rgba(255, 255, 255, 0.85);
+      overflow: hidden;
     }
 
     .top-band {
       background: var(--raspberry);
       width: 100%;
-      height: 8px;
+      height: 6px;
+      flex-shrink: 0;
     }
 
     .header {
       background: rgba(255, 255, 255, 0.95);
-      padding: 24px 48px;
+      padding: 14px 30px;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       border-bottom: 2px solid var(--raspberry-pale);
       text-align: center;
+      flex-shrink: 0;
     }
 
     .logo-container {
       display: flex;
       justify-content: center;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     .logo-container img {
-      height: 90px;
+      height: 60px;
       width: auto;
     }
 
@@ -127,57 +138,60 @@
 
     .brand-name {
       font-family: 'Inter', sans-serif;
-      font-size: 32px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--raspberry);
       letter-spacing: -1px;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .brand-tagline {
-      font-size: 11px;
+      font-size: 9px;
       color: var(--text-mid);
       font-weight: 600;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
 
     .brand-subtitle {
-      font-size: 13px;
+      font-size: 10px;
       color: var(--raspberry);
       font-weight: 600;
-      margin-top: 8px;
-      line-height: 1.4;
+      margin-top: 4px;
+      line-height: 1.3;
     }
 
     .content {
-      padding: 36px 48px;
+      padding: 14px 30px;
       flex: 1;
       background: rgba(255, 255, 255, 0.92);
-      overflow-y: auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .headline-section {
       background: var(--raspberry-pale);
-      padding: 28px;
-      border-radius: 8px;
-      margin-bottom: 28px;
-      border-left: 5px solid var(--raspberry);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--raspberry);
+      flex-shrink: 0;
     }
 
     .headline {
-      font-size: 32px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--raspberry);
-      margin-bottom: 10px;
+      margin-bottom: 4px;
       line-height: 1.2;
     }
 
     .subheadline {
-      font-size: 15px;
+      font-size: 11px;
       color: var(--text-mid);
       font-weight: 500;
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     .subheadline strong {
@@ -187,142 +201,148 @@
 
     .sarcasm-box {
       background: #FFFAF0;
-      border-left: 4px solid var(--raspberry);
-      padding: 18px 22px;
-      margin-bottom: 24px;
-      border-radius: 6px;
+      border-left: 3px solid var(--raspberry);
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 5px;
       font-style: italic;
       color: var(--text-dark);
-      font-size: 14px;
-      line-height: 1.6;
+      font-size: 11px;
+      line-height: 1.4;
+      flex-shrink: 0;
     }
 
     .services-title {
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--raspberry);
-      margin-bottom: 14px;
+      margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
     }
 
     .services-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 24px;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
     }
 
     .service-card {
       background: var(--gray-light);
-      border: 2px solid var(--raspberry-pale);
-      border-radius: 8px;
-      padding: 16px;
+      border: 1px solid var(--raspberry-pale);
+      border-radius: 6px;
+      padding: 10px;
     }
 
     .service-icon {
-      font-size: 22px;
-      margin-bottom: 6px;
+      font-size: 18px;
+      margin-bottom: 3px;
     }
 
     .service-name {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--raspberry);
-      margin-bottom: 5px;
+      margin-bottom: 2px;
     }
 
     .service-desc {
-      font-size: 12px;
+      font-size: 9px;
       color: var(--text-mid);
-      line-height: 1.4;
+      line-height: 1.3;
     }
 
     .tech-section {
       background: var(--raspberry);
       color: var(--white);
-      padding: 24px;
-      border-radius: 8px;
-      margin-bottom: 24px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
     }
 
     .tech-title {
-      font-size: 15px;
+      font-size: 11px;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .tech-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      font-size: 12px;
-      line-height: 1.6;
+      gap: 4px;
+      font-size: 9px;
+      line-height: 1.3;
     }
 
     .tech-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .tech-item::before {
       content: "✓";
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 700;
     }
 
     .selling-point {
       background: linear-gradient(135deg, var(--raspberry) 0%, var(--raspberry-light) 100%);
       color: var(--white);
-      padding: 24px;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border-radius: 6px;
       text-align: center;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 24px rgba(155, 27, 75, 0.2);
+      margin-bottom: 8px;
+      box-shadow: 0 4px 12px rgba(155, 27, 75, 0.2);
+      flex-shrink: 0;
     }
 
     .selling-point-title {
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 800;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .selling-point-text {
-      font-size: 14px;
+      font-size: 11px;
       font-weight: 600;
-      line-height: 1.5;
+      line-height: 1.3;
     }
 
     .highlight {
       background: rgba(255, 255, 255, 0.25);
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 1px 4px;
+      border-radius: 2px;
       font-weight: 800;
     }
 
     .cta-section {
       background: var(--raspberry-pale);
       border: 2px dashed var(--raspberry);
-      border-radius: 8px;
-      padding: 20px;
+      border-radius: 6px;
+      padding: 10px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
+      flex-shrink: 0;
     }
 
     .cta-text {
-      font-size: 13px;
+      font-size: 10px;
       color: var(--text-dark);
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
     }
 
     .cta-highlight {
-      font-size: 15px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--raspberry);
       font-style: italic;
@@ -331,27 +351,28 @@
     .poster-footer {
       background: var(--text-dark);
       color: var(--white);
-      padding: 16px 48px;
+      padding: 10px 30px;
       text-align: center;
-      font-size: 11px;
-      line-height: 1.6;
-      border-top: 3px solid var(--raspberry);
+      font-size: 9px;
+      line-height: 1.4;
+      border-top: 2px solid var(--raspberry);
+      flex-shrink: 0;
     }
 
     .poster-footer p {
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .footer-brand {
       font-weight: 700;
       color: var(--white);
-      margin-bottom: 6px;
-      font-size: 12px;
+      margin-bottom: 3px;
+      font-size: 10px;
     }
 
     .footer-details {
-      font-size: 10px;
-      line-height: 1.8;
+      font-size: 8px;
+      line-height: 1.4;
       color: var(--white);
     }
 
@@ -363,18 +384,24 @@
     .footer-contact {
       font-weight: 600;
       color: #FF8A9B;
-      font-size: 10px;
+      font-size: 8px;
     }
 
     @media print {
-      body { background: white; padding: 0; }
-      .poster { box-shadow: none; width: 100%; }
-    }
-
-    @media (max-width: 900px) {
-      .poster { width: 100%; }
-      .services-grid { grid-template-columns: 1fr; }
-      .tech-list { grid-template-columns: 1fr; }
+      body { 
+        background: white; 
+        padding: 0;
+        margin: 0;
+      }
+      .poster { 
+        box-shadow: none; 
+        width: 100%;
+        height: 100%;
+      }
+      html { 
+        width: 100%;
+        height: 100%;
+      }
     }
   </style>
 </head>
@@ -417,22 +444,22 @@
           <div class="service-card">
             <div class="service-icon">🌐</div>
             <div class="service-name">Modern Websites</div>
-            <div class="service-desc">Responsive & fast web applications built with latest technologies.</div>
+            <div class="service-desc">Responsive & fast web applications with latest technologies.</div>
           </div>
           <div class="service-card">
             <div class="service-icon">🍽️</div>
-            <div class="service-name">Restaurant Billing Tools</div>
-            <div class="service-desc">Intelligent management system for seamless operations.</div>
+            <div class="service-name">Restaurant Billing</div>
+            <div class="service-desc">Intelligent management system for operations.</div>
           </div>
           <div class="service-card">
             <div class="service-icon">⚙️</div>
             <div class="service-name">Full Automation</div>
-            <div class="service-desc">GitHub Copilot + DevOps + Cloud = Lightning Speed</div>
+            <div class="service-desc">GitHub Copilot + DevOps + Cloud</div>
           </div>
           <div class="service-card">
             <div class="service-icon">🚀</div>
-            <div class="service-name">Any Custom Project</div>
-            <div class="service-desc">Got an idea? We'll automate it end-to-end.</div>
+            <div class="service-name">Custom Projects</div>
+            <div class="service-desc">Got an idea? We'll automate it.</div>
           </div>
         </div>
 
@@ -453,7 +480,7 @@
         <div class="selling-point">
           <div class="selling-point-title">⚡ Lightning Fast Delivery</div>
           <div class="selling-point-text">
-            We deliver <span class="highlight">50% faster</span> than traditional developers by automating the entire workflow with AI.
+            We deliver <span class="highlight">50% faster</span> than traditional developers with AI automation.
           </div>
         </div>
 
@@ -468,11 +495,9 @@
       <div class="poster-footer">
         <div class="footer-brand">EKSPERTY | Digital Innovation & Automation</div>
         <div class="footer-details">
-          📧 Email: <a href="mailto:hr@eksperty.com">hr@eksperty.com</a><br/>
-          📞 Contact: +91 6302672256<br/>
-          🌐 Website: <a href="https://www.eksperty.com" target="_blank">www.eksperty.com</a>
+          📧 Email: <a href="mailto:hr@eksperty.com">hr@eksperty.com</a> | 📞 +91 6302672256 | 🌐 <a href="https://www.eksperty.com" target="_blank">www.eksperty.com</a>
         </div>
-        <p class="footer-contact">🌐 Modern Websites | 🍽️ Smart Restaurant Billing | ⚙️ Full Project Automation</p>
+        <p class="footer-contact">🌐 Modern Websites | 🍽️ Restaurant Billing | ⚙️ Full Project Automation</p>
       </div>
     </div>
   </div>
