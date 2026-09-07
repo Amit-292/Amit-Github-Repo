@@ -1,4 +1,6 @@
-// Force rebuild - v1.1 with new admin features
+// Build version: v2.0 - Node 20 LTS compatibility fix
+// Force production rebuild with Node 20
+
 require('dotenv').config();
 const express = require('express');
 const http = require('http');
