@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import ForgotPasswordModal from '../components/ForgotPasswordModal';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -65,8 +67,34 @@ export default function AdminLogin() {
           <button className="btn btn-primary btn-lg" type="submit" disabled={loading} style={{ background: '#6B4423', color: 'white', width: '100%', fontWeight: '600', padding: '12px', borderRadius: '6px' }}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
+          <button
+            type="button"
+            onClick={() => setShowForgotPassword(true)}
+            style={{
+              width: '100%',
+              background: 'transparent',
+              color: '#6B4423',
+              padding: '10px',
+              fontWeight: '500',
+              marginTop: '10px',
+              border: 'none',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            Forgot Password?
+          </button>
         </form>
       </div>
+      {showForgotPassword && (
+        <ForgotPasswordModal
+          onClose={() => setShowForgotPassword(false)}
+          onSuccess={() => {
+            setUsername('');
+            setPassword('');
+          }}
+        />
+      )}
     </div>
   );
 }

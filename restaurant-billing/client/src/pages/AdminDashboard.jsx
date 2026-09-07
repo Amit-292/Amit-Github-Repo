@@ -43,6 +43,7 @@ export default function AdminDashboard() {
   const [billsHistory, setBillsHistory] = useState([]);
   const [billsHistoryDate, setBillsHistoryDate] = useState('');
   const [expandedHistoryBill, setExpandedHistoryBill] = useState(null);
+  const [expandedTableGroup, setExpandedTableGroup] = useState(null);
 
   // Best Sellers
   const [bestSellers, setBestSellers] = useState([]);
@@ -139,6 +140,127 @@ export default function AdminDashboard() {
       await api.delete(`/orders/bills-history/${sessionId}`);
       loadBillsHistory(billsHistoryDate);
     } catch (err) { alert(err.response?.data?.error || 'Failed to delete bill'); }
+  };
+
+  const exportBillsHistoryToExcel = () => {
+    if (billsHistory.length === 0) {
+      alert('No bills to export');
+      return;
+    }
+
+    const data = billsHistory.map(bill => {
+      const itemsList = bill.orders.flatMap(order => 
+        order.items.map(item => `${item.name} × ${item.quantity}`)
+      ).join(', ');
+      return {
+        'Date': new Date(bill.createdAt + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+        'Time': new Date(bill.createdAt + 'Z').toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        'Table': `${bill.tableNumber}${bill.tableLabel ? ' - ' + bill.tableLabel : ''}`,
+        'Group': bill.groupId || '1',
+        'Items': itemsList,
+        'Subtotal': bill.subtotal.toFixed(2),
+        'GST (5%)': (bill.grandTotal - bill.subtotal).toFixed(2),
+        'Grand Total': bill.grandTotal.toFixed(2),
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    ws['!cols'] = [{ wch: 15 }, { wch: 12 }, { wch: 20 }, { wch: 8 }, { wch: 35 }, { wch: 12 }, { wch: 12 }, { wch: 12 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bills History');
+    XLSX.writeFile(wb, `bills-history-${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const exportBillsHistoryToPDF = () => {
+    if (billsHistory.length === 0) {
+      alert('No bills to export');
+      return;
+    }
+
+    const totalGrandTotal = billsHistory.reduce((sum, b) => sum + b.grandTotal, 0).toFixed(2);
+    const html = `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Bills History Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; text-align: center; margin-bottom: 10px; }
+            .report-date { text-align: center; color: #666; margin-bottom: 20px; font-size: 12px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 11px; }
+            th { background-color: #6B4423; color: white; font-weight: bold; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .total-row { background-color: #e8e8e8; font-weight: bold; }
+            .amount { text-align: right; }
+          </style>
+        </head>
+        <body>
+          <h1>Bills History Report</h1>
+          <p class="report-date">Generated on ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Table</th>
+                <th>Group</th>
+                <th>Items</th>
+                <th class="amount">Subtotal</th>
+                <th class="amount">GST (5%)</th>
+                <th class="amount">Grand Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${billsHistory.map(bill => `
+                <tr>
+                  <td>${new Date(bill.createdAt + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                  <td>${new Date(bill.createdAt + 'Z').toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</td>
+                  <td>${bill.tableNumber}${bill.tableLabel ? ' - ' + bill.tableLabel : ''}</td>
+                  <td>${bill.groupId || '1'}</td>
+                  <td>${bill.orders.flatMap(o => o.items.map(i => `${i.name} ×${i.quantity}`)).join(', ')}</td>
+                  <td class="amount">₹${bill.subtotal.toFixed(2)}</td>
+                  <td class="amount">₹${(bill.grandTotal - bill.subtotal).toFixed(2)}</td>
+                  <td class="amount" style="font-weight: bold; color: #27ae60;">₹${bill.grandTotal.toFixed(2)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td colspan="7" style="text-align: right;">GRAND TOTAL</td>
+                <td class="amount" style="color: #27ae60;">₹${totalGrandTotal}</td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    const options = {
+      margin: 10,
+      filename: `bills-history-${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+    };
+
+    html2pdf().set(options).from(html).save();
+  };
+
+  const getTableGroupedBills = () => {
+    const grouped = {};
+    billsHistory.forEach(bill => {
+      const key = bill.tableNumber;
+      if (!grouped[key]) {
+        grouped[key] = {
+          tableNumber: bill.tableNumber,
+          tableLabel: bill.tableLabel,
+          bills: [],
+          tableTotal: 0,
+        };
+      }
+      grouped[key].bills.push(bill);
+      grouped[key].tableTotal += bill.grandTotal;
+    });
+    return Object.values(grouped).sort((a, b) => a.tableNumber - b.tableNumber);
   };
 
   const loadBestSellers = useCallback(async () => {
@@ -1157,6 +1279,8 @@ export default function AdminDashboard() {
                   title="Filter by date"
                 />
                 <button className="btn btn-sm btn-outline" onClick={() => loadBillsHistory(billsHistoryDate)}>↻ Refresh</button>
+                <button className="btn btn-sm btn-success" onClick={exportBillsHistoryToExcel}>📊 Excel</button>
+                <button className="btn btn-sm btn-danger" onClick={exportBillsHistoryToPDF}>📄 PDF</button>
               </div>
             </div>
 
@@ -1181,60 +1305,95 @@ export default function AdminDashboard() {
                   ))}
                 </div>
 
-                {billsHistory.map(bill => {
-                  const isExpanded = expandedHistoryBill === bill.sessionId;
+                {getTableGroupedBills().map(tableGroup => {
+                  const isTableExpanded = expandedTableGroup === tableGroup.tableNumber;
                   return (
-                    <div key={bill.sessionId} className="card mb-16">
+                    <div key={tableGroup.tableNumber} className="card mb-16">
                       <div
                         className="flex-between"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setExpandedHistoryBill(isExpanded ? null : bill.sessionId)}
+                        style={{ cursor: 'pointer', backgroundColor: '#f8f8f8', padding: '12px', borderRadius: '6px' }}
+                        onClick={() => setExpandedTableGroup(isTableExpanded ? null : tableGroup.tableNumber)}
                       >
                         <div>
-                          <strong style={{ fontSize: '1.05rem' }}>
-                            Table {bill.tableNumber}
-                            {bill.groupId && bill.groupId !== '1' ? ` · Group ${bill.groupId}` : ''}
+                          <strong style={{ fontSize: '1.15rem', color: '#6B4423' }}>
+                            🪑 Table {tableGroup.tableNumber}
+                            {tableGroup.tableLabel && <span style={{ marginLeft: 8, color: '#888', fontSize: '0.9rem' }}>- {tableGroup.tableLabel}</span>}
                           </strong>
-                          {bill.tableLabel && <span style={{ marginLeft: 8, color: '#888', fontSize: '0.85rem' }}>{bill.tableLabel}</span>}
-                          <div style={{ marginTop: 4, fontSize: '0.82rem', color: '#888' }}>
-                            📅 {new Date(bill.createdAt + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          <div style={{ marginTop: 4, fontSize: '0.9rem', color: '#666' }}>
+                            {tableGroup.bills.length} bill{tableGroup.bills.length !== 1 ? 's' : ''}
                           </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#27ae60' }}>₹{bill.grandTotal.toFixed(2)}</div>
-                          <div style={{ fontSize: '0.78rem', color: '#aaa' }}>incl. 5% GST</div>
-                          <div style={{ fontSize: '0.85rem', marginTop: 4 }}>{isExpanded ? '▲ Hide' : '▼ View Details'}</div>
+                          <div style={{ fontWeight: 700, fontSize: '1.2rem', color: '#27ae60' }}>₹{tableGroup.tableTotal.toFixed(2)}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#999', marginTop: 2 }}>Table Total</div>
+                          <div style={{ fontSize: '0.85rem', marginTop: 6, color: '#666' }}>{isTableExpanded ? '▲ Hide' : '▼ View Bills'}</div>
                         </div>
                       </div>
 
-                      {isExpanded && (
-                        <div style={{ marginTop: 16, borderTop: '1px solid #eee', paddingTop: 16 }}>
-                          {bill.orders.map((order, idx) => (
-                            <div key={order.id} style={{ marginBottom: 12 }}>
-                              <div style={{ fontWeight: 600, fontSize: '0.88rem', marginBottom: 6, color: '#666' }}>
-                                Order #{idx + 1} — <span style={{ color: '#27ae60' }}>{order.status}</span>
-                              </div>
-                              {order.items.map((item) => (
-                                <div key={item.id} className="bill-row" style={{ fontSize: '0.88rem' }}>
-                                  <span>{item.name} × {item.quantity}</span>
-                                  <span>₹{(item.price_at_order * item.quantity).toFixed(2)}</span>
+                      {isTableExpanded && (
+                        <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #eee' }}>
+                          {tableGroup.bills.map((bill, billIdx) => {
+                            const isExpanded = expandedHistoryBill === bill.sessionId;
+                            return (
+                              <div key={bill.sessionId} style={{ marginBottom: 16, padding: '12px', backgroundColor: '#fafafa', borderRadius: '6px', border: '1px solid #eee' }}>
+                                <div
+                                  className="flex-between"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() => setExpandedHistoryBill(isExpanded ? null : bill.sessionId)}
+                                >
+                                  <div>
+                                    <strong style={{ fontSize: '1rem' }}>
+                                      Bill #{billIdx + 1}
+                                      {bill.groupId && bill.groupId !== '1' ? ` · Group ${bill.groupId}` : ''}
+                                    </strong>
+                                    <div style={{ marginTop: 4, fontSize: '0.82rem', color: '#888' }}>
+                                      📅 {new Date(bill.createdAt + 'Z').toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                    </div>
+                                  </div>
+                                  <div style={{ textAlign: 'right' }}>
+                                    <div style={{ fontWeight: 700, fontSize: '1rem', color: '#27ae60' }}>₹{bill.grandTotal.toFixed(2)}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#aaa' }}>incl. 5% GST</div>
+                                    <div style={{ fontSize: '0.85rem', marginTop: 4 }}>{isExpanded ? '▲ Hide' : '▼ Details'}</div>
+                                  </div>
                                 </div>
-                              ))}
-                            </div>
-                          ))}
-                          <hr className="bill-divider" />
-                          <div className="bill-row"><span>Subtotal</span><span>₹{bill.subtotal.toFixed(2)}</span></div>
-                          <div className="bill-row"><span>GST (5%)</span><span>₹{(bill.grandTotal - bill.subtotal).toFixed(2)}</span></div>
-                          <div className="bill-row" style={{ fontWeight: 700, fontSize: '1rem' }}><span>Grand Total</span><span>₹{bill.grandTotal.toFixed(2)}</span></div>
 
-                          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed #eee' }}>
-                            <button
-                              className="btn btn-sm btn-danger"
-                              onClick={() => deleteBillHistory(bill.sessionId)}
-                              style={{ marginRight: 8 }}
-                            >
-                              🗑 Delete Bill
-                            </button>
+                                {isExpanded && (
+                                  <div style={{ marginTop: 12, borderTop: '1px solid #ddd', paddingTop: 12 }}>
+                                    {bill.orders.map((order, idx) => (
+                                      <div key={order.id} style={{ marginBottom: 10 }}>
+                                        <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: 4, color: '#555' }}>
+                                          Order #{idx + 1} — <span style={{ color: '#27ae60' }}>{order.status}</span>
+                                        </div>
+                                        {order.items.map((item) => (
+                                          <div key={item.id} className="bill-row" style={{ fontSize: '0.85rem', padding: '4px 0' }}>
+                                            <span>{item.name} × {item.quantity}</span>
+                                            <span>₹{(item.price_at_order * item.quantity).toFixed(2)}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ))}
+                                    <hr className="bill-divider" style={{ margin: '10px 0' }} />
+                                    <div className="bill-row" style={{ fontSize: '0.85rem' }}><span>Subtotal</span><span>₹{bill.subtotal.toFixed(2)}</span></div>
+                                    <div className="bill-row" style={{ fontSize: '0.85rem' }}><span>GST (5%)</span><span>₹{(bill.grandTotal - bill.subtotal).toFixed(2)}</span></div>
+                                    <div className="bill-row" style={{ fontWeight: 700, fontSize: '0.95rem', padding: '6px 0' }}><span>Bill Total</span><span>₹{bill.grandTotal.toFixed(2)}</span></div>
+
+                                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #ddd' }}>
+                                      <button
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => deleteBillHistory(bill.sessionId)}
+                                      >
+                                        🗑 Delete Bill
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                          <div style={{ marginTop: 16, padding: '12px', backgroundColor: '#e8f5e9', borderRadius: '6px', borderLeft: '4px solid #27ae60' }}>
+                            <div style={{ fontWeight: 700, fontSize: '1rem', color: '#27ae60' }}>
+                              Table Total: ₹{tableGroup.tableTotal.toFixed(2)}
+                            </div>
                           </div>
                         </div>
                       )}
